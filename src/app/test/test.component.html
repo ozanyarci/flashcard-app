@@ -1,6 +1,11 @@
 <!-- src/app/test/test.component.html -->
 
-<div class="test-container" *ngIf="!showResult">
+<div *ngIf="noFlashcards" class="no-flashcards-container">
+  <h2>No flashcards available</h2>
+  <p>Please create some flashcards to start the test.</p>
+  <button mat-raised-button color="primary" routerLink="/flashcards">Go to Flashcards</button>
+</div>
+<div class="test-container" *ngIf="!noFlashcards && !showResult">
   <h2>Question {{currentQuestionIndex + 1}}/{{flashcards.length}}</h2>
   <p>What is the meaning of the word: <strong>{{flashcards[currentQuestionIndex]?.word}}</strong>?</p>
   <mat-radio-group [(ngModel)]="userAnswer">
@@ -14,5 +19,5 @@
   <h2>Test Completed</h2>
   <p>You scored {{score}} out of {{flashcards.length}}</p>
   <button mat-raised-button color="primary" (click)="restartTest()">Restart Test</button>
-  <button mat-raised-button color="accent" routerLink="/flashcards">Back to Flashcards</button>
+  <button mat-raised-button color="accent" routerLink="/flashcards" routerLinkActive="router-link-active">Back to Flashcards</button>
 </div>

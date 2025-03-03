@@ -23,7 +23,7 @@
 
 .flashcard-wrapper {
   display: flex;
-  flex-direction: column; /* Column layout to stack flashcard and actions */
+  flex-direction: column;
   align-items: center;
   justify-content: center;
 }
@@ -31,6 +31,7 @@
 .flashcard {
   perspective: 1000px;
   margin: 0 20px;
+  position: relative; /* Ensure buttons are positioned relative to flashcard */
 }
 
 .flashcard-inner {
@@ -92,8 +93,9 @@
 }
 
 .flashcard-actions {
+  position: absolute; /* Position buttons absolutely within the card */
+  top: 10px; /* Position at the top */
+  right: 10px; /* Align to the right */
   display: flex;
-  justify-content: center;
-  margin-top: 10px; /* Move buttons up by reducing the margin-top value */
   gap: 10px; /* Add gap between buttons */
 }

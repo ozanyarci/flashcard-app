@@ -8,7 +8,7 @@ export interface Flashcard {
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class FlashcardService {
   private flashcards: Flashcard[] = [];

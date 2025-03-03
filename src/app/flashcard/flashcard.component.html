@@ -1,9 +1,4 @@
 <!-- src/app/flashcard/flashcard.component.html -->
-
-<mat-toolbar color="primary">
-  <span>Flashcards</span>
-</mat-toolbar>
-
 <div class="flashcard-container">
   <div class="form-container">
     <form (submit)="addOrUpdateFlashcard()">
@@ -32,6 +27,10 @@
             <div class="flashcard-content">
               <mat-card-title>{{ flashcards[currentFlashcardIndex]?.word }}</mat-card-title>
             </div>
+            <div class="flashcard-actions">
+              <button mat-mini-fab color="accent" (click)="editFlashcard(currentFlashcardIndex); $event.stopPropagation();"><mat-icon>edit</mat-icon></button>
+              <button mat-mini-fab color="warn" (click)="deleteFlashcard(currentFlashcardIndex); $event.stopPropagation();"><mat-icon>delete</mat-icon></button>
+            </div>
           </div>
           <div class="flashcard-back">
             <div class="card-number">{{currentFlashcardIndex + 1}}/{{flashcards.length}}</div>
@@ -43,10 +42,6 @@
             </div>
           </div>
         </div>
-      </div>
-      <div *ngIf="flashcards.length > 0" class="flashcard-actions">
-        <button mat-raised-button color="accent" (click)="editFlashcard(currentFlashcardIndex)">Edit</button>
-        <button mat-raised-button color="warn" (click)="deleteFlashcard(currentFlashcardIndex)">Delete</button>
       </div>
     </div>
 

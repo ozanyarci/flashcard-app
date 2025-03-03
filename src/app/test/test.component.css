@@ -1,6 +1,6 @@
 /* src/app/test/test.component.css */
 
-.test-container, .result-container {
+.test-container, .result-container, .no-flashcards-container {
   max-width: 600px;
   margin: 20px auto;
   text-align: center;
@@ -15,4 +15,8 @@ mat-radio-group {
   flex-direction: column;
   align-items: flex-start;
   margin: 20px 0;
+}
+
+.no-flashcards-container {
+  margin-top: 50px;
 }

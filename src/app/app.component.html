@@ -1,9 +1,19 @@
-<h1>Flashcards App</h1>
-<nav>
-  <ul>
-    <li><a routerLink="/flashcards" routerLinkActive="active" ariaCurrentWhenActive="page">Flashcards</a></li>
-    <li><a routerLink="/test" routerLinkActive="active" ariaCurrentWhenActive="page">Test yourself</a></li>
-  </ul>
-</nav>
-<!-- The routed views render in the <router-outlet>-->
-<router-outlet />
+<!-- <mat-toolbar color="primary">
+  <span>Flashcards App</span>
+  <button mat-button routerLink="/flashcards" routerLinkActive="active" ariaCurrentWhenActive="page">Flashcards</button>
+  <button mat-button routerLink="/test" routerLinkActive="active" ariaCurrentWhenActive="page">Test</button>
+</mat-toolbar>
+
+<router-outlet></router-outlet> -->
+
+<!-- src/app/app.component.html -->
+
+<mat-toolbar color="primary">
+  <span>Flashcards App</span>
+  <div class="toolbar-buttons">
+    <button mat-button routerLink="/flashcards" routerLinkActive="router-link-active">Flashcards</button>
+    <button *ngIf="hasEnoughFlashcards()" mat-button routerLink="/test" routerLinkActive="router-link-active">Test</button>
+  </div>
+</mat-toolbar>
+
+<router-outlet></router-outlet>
