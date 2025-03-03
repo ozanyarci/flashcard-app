@@ -1,0 +1,57 @@
+<!-- src/app/flashcard/flashcard.component.html -->
+
+<mat-toolbar color="primary">
+  <span>Flashcards</span>
+</mat-toolbar>
+
+<div class="flashcard-container">
+  <div class="form-container">
+    <form (submit)="addOrUpdateFlashcard()">
+      <mat-form-field class="example-full-width">
+        <mat-label>Word</mat-label>
+        <input matInput [(ngModel)]="newWord" name="word" required />
+      </mat-form-field>
+      <mat-form-field class="example-full-width">
+        <mat-label>Meaning</mat-label>
+        <input matInput [(ngModel)]="newMeaning" name="meaning" required />
+      </mat-form-field>
+      <button mat-raised-button color="primary" type="submit">{{ editMode ? 'Update' : 'Add' }} Flashcard</button>
+    </form>
+  </div>
+
+  <div class="navigation-buttons">
+    <button mat-icon-button (click)="previousFlashcard()" [disabled]="currentFlashcardIndex === 0">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+
+    <div class="flashcard-wrapper">
+      <div *ngIf="flashcards.length > 0" class="flashcard" (click)="flipCard()">
+        <div class="flashcard-inner" [class.flipped]="isFlipped">
+          <div class="flashcard-front">
+            <div class="card-number">{{currentFlashcardIndex + 1}}/{{flashcards.length}}</div>
+            <div class="flashcard-content">
+              <mat-card-title>{{ flashcards[currentFlashcardIndex]?.word }}</mat-card-title>
+            </div>
+          </div>
+          <div class="flashcard-back">
+            <div class="card-number">{{currentFlashcardIndex + 1}}/{{flashcards.length}}</div>
+            <div class="flashcard-content">
+              <mat-card-title>Meaning</mat-card-title>
+              <mat-card-content class="flashcard-description">
+                <p>{{ flashcards[currentFlashcardIndex]?.meaning }}</p>
+              </mat-card-content>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div *ngIf="flashcards.length > 0" class="flashcard-actions">
+        <button mat-raised-button color="accent" (click)="editFlashcard(currentFlashcardIndex)">Edit</button>
+        <button mat-raised-button color="warn" (click)="deleteFlashcard(currentFlashcardIndex)">Delete</button>
+      </div>
+    </div>
+
+    <button mat-icon-button (click)="nextFlashcard()" [disabled]="currentFlashcardIndex >= flashcards.length - 1">
+      <mat-icon>arrow_forward</mat-icon>
+    </button>
+  </div>
+</div>
