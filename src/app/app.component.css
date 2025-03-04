@@ -2,38 +2,39 @@
 
 mat-toolbar {
   display: flex;
-  justify-content: space-around;
+  justify-content: space-between;
   align-items: center;
   background-color: #3f51b5; /* Toolbar background color */
   color: white; /* Toolbar text color */
 }
 
-mat-toolbar .toolbar-buttons {
+.toolbar-buttons {
   display: flex;
 }
 
-mat-toolbar .toolbar-buttons button {
+.toolbar-buttons button {
   margin-right: 10px;
-  color: white; /* Ensure text color is white */
 }
 
-button, mat-button {
-  margin: 10px;
-  padding: 10px 20px;
-  border-radius: 4px;
-  text-transform: uppercase;
-  background-color: #4caf50; /* Green background color */
-  color: white; /* White text color */
+mat-button {
+  color: white; /* Ensure button text color is white */
   font-weight: bold;
-  cursor: pointer;
-  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-button:hover, mat-button:hover {
-  background-color: #45a049; /* Slightly darker green on hover */
-  color: white; /* Ensure text remains white on hover */
+.button-modern {
+  background-color: #4caf50; /* Green background color */
+  border-radius: 20px;
+  padding: 10px 20px;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.button-modern:hover {
+  background-color: #388e3c; /* Darker green on hover */
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
 }
 
 .router-link-active {
   font-weight: bold;
+  color: #ff4081;
 }

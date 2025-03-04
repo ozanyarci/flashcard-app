@@ -1,4 +1,4 @@
-<!-- src/app/test/test.component.html -->
+<!-- src/app/meaning-test/meaning-test.component.html -->
 
 <div *ngIf="noFlashcards" class="no-flashcards-container">
   <h2>No flashcards available</h2>
@@ -7,7 +7,7 @@
 </div>
 <div class="test-container" *ngIf="!noFlashcards && !showResult">
   <h2>Question {{currentQuestionIndex + 1}}/{{flashcards.length}}</h2>
-  <p>What is the meaning of the word: <strong>{{flashcards[currentQuestionIndex]?.word}}</strong>?</p>
+  <p>Select the word that matches the meaning: <strong>{{flashcards[currentQuestionIndex]?.meaning}}</strong></p>
   <mat-radio-group [(ngModel)]="userAnswer" (change)="checkAnswer($event.value)" class="options-group">
     <mat-radio-button *ngFor="let option of options" [value]="option" class="option-item">
       {{ option }}

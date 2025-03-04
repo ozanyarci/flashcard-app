@@ -5,27 +5,28 @@ import { Injectable } from '@angular/core';
 export interface Flashcard {
   word: string;
   meaning: string;
+  example?: string; // Optional example sentence
 }
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: 'root'
 })
 export class FlashcardService {
-  private flashcards: Flashcard[] = [];
   private storageKey = 'flashcards';
+  private flashcards: Flashcard[] = [];
 
   constructor() {
     this.loadFlashcards();
   }
 
-  addFlashcard(word: string, meaning: string): void {
-    this.flashcards.push({ word, meaning });
+  addFlashcard(word: string, meaning: string, example?: string): void {
+    this.flashcards.push({ word, meaning, example });
     this.saveFlashcards();
   }
 
-  updateFlashcard(index: number, word: string, meaning: string): void {
+  updateFlashcard(index: number, word: string, meaning: string, example?: string): void {
     if (index >= 0 && index < this.flashcards.length) {
-      this.flashcards[index] = { word, meaning };
+      this.flashcards[index] = { word, meaning, example };
       this.saveFlashcards();
     }
   }

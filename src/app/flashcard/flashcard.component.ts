@@ -21,28 +21,35 @@ import { MatIconModule } from '@angular/material/icon';
 export class FlashcardComponent {
   newWord: string = '';
   newMeaning: string = '';
+  newExample: string = ''; // Optional example sentence
   editMode: boolean = false;
   currentEditIndex: number | null = null;
-  flashcards: { word: string, meaning: string }[] = [];
+  flashcards: { word: string, meaning: string, example?: string }[] = [];
   currentFlashcardIndex: number = 0;
   isFlipped: boolean = false;
+  currentIndex: number | null = null; // Add new variable to hold current index
 
   constructor(private flashcardService: FlashcardService) { }
 
   addOrUpdateFlashcard() {
-    if (this.newWord && this.newMeaning) {
+    if (this.newWord.trim() && this.newMeaning.trim()) {
       if (this.editMode && this.currentEditIndex !== null) {
-        this.flashcardService.updateFlashcard(this.currentEditIndex, this.newWord, this.newMeaning);
+        this.flashcardService.updateFlashcard(this.currentEditIndex, this.newWord.trim(), this.newMeaning.trim(), this.newExample.trim());
         this.editMode = false;
         this.currentEditIndex = null;
+        this.currentIndex = null;
       } else {
-        this.flashcardService.addFlashcard(this.newWord, this.newMeaning);
+        this.flashcardService.addFlashcard(this.newWord.trim(), this.newMeaning.trim(), this.newExample.trim());
+        this.currentIndex = this.flashcards.length;
       }
       this.newWord = '';
       this.newMeaning = '';
+      this.newExample = ''; // Reset example input
       this.loadFlashcards();
-      this.currentFlashcardIndex = this.flashcards.length - 1; // Show the newly added or updated flashcard
-      this.isFlipped = false; // Reset flip status when new card is added
+      this.viewUpdatedCard();
+      this.isFlipped = false; // Reset flip status when new card is added or updated
+    } else {
+      alert("Both Word and Meaning fields are required.");
     }
   }
 
@@ -50,8 +57,10 @@ export class FlashcardComponent {
     const flashcard = this.flashcards[index];
     this.newWord = flashcard.word;
     this.newMeaning = flashcard.meaning;
+    this.newExample = flashcard.example || ''; // Populate example if available
     this.editMode = true;
     this.currentEditIndex = index;
+    this.currentFlashcardIndex = index; // Show the flashcard being edited
   }
 
   deleteFlashcard(index: number) {
@@ -83,6 +92,12 @@ export class FlashcardComponent {
 
   flipCard() {
     this.isFlipped = !this.isFlipped;
+  }
+
+  viewUpdatedCard() {
+    if (this.currentIndex !== null && this.currentIndex < this.flashcards.length) {
+      this.currentFlashcardIndex = this.currentIndex;
+    }
   }
 
   ngOnInit() {

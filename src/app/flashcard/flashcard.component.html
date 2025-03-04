@@ -1,4 +1,5 @@
 <!-- src/app/flashcard/flashcard.component.html -->
+
 <div class="flashcard-container">
   <div class="form-container">
     <form (submit)="addOrUpdateFlashcard()">
@@ -9,6 +10,10 @@
       <mat-form-field class="example-full-width">
         <mat-label>Meaning</mat-label>
         <input matInput [(ngModel)]="newMeaning" name="meaning" required />
+      </mat-form-field>
+      <mat-form-field class="example-full-width">
+        <mat-label>Example (optional)</mat-label>
+        <input matInput [(ngModel)]="newExample" name="example" />
       </mat-form-field>
       <button mat-raised-button color="primary" type="submit">{{ editMode ? 'Update' : 'Add' }} Flashcard</button>
     </form>
@@ -34,11 +39,13 @@
           </div>
           <div class="flashcard-back">
             <div class="card-number">{{currentFlashcardIndex + 1}}/{{flashcards.length}}</div>
-            <div class="flashcard-content">
-              <mat-card-title>Meaning</mat-card-title>
-              <mat-card-content class="flashcard-description">
-                <p>{{ flashcards[currentFlashcardIndex]?.meaning }}</p>
-              </mat-card-content>
+            <div class="flashcard-content-back">
+              <h3>Meaning:</h3>
+              <p>{{ flashcards[currentFlashcardIndex]?.meaning }}</p>
+              <ng-container *ngIf="flashcards[currentFlashcardIndex]?.example">
+                <h3>Example:</h3>
+                <p>{{ flashcards[currentFlashcardIndex]?.example }}</p>
+              </ng-container>
             </div>
           </div>
         </div>

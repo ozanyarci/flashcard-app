@@ -32,12 +32,19 @@
   perspective: 1000px;
   margin: 0 20px;
   position: relative; /* Ensure buttons are positioned relative to flashcard */
+  cursor: pointer; /* Change the cursor to a pointer on hover */
+  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth transition for hover effects */
+}
+
+.flashcard:hover {
+  transform: scale(1.05); /* Slightly scale up the card on hover */
+  box-shadow: 0px 12px 24px rgba(0, 0, 0, 0.2); /* Add a shadow effect on hover */
 }
 
 .flashcard-inner {
   position: relative;
   width: 350px; /* Fixed width for consistent appearance */
-  height: 250px; /* Increase height to fit longer content */
+  height: 250px; /* Adjust height to fit longer content */
   transform-style: preserve-3d;
   transition: transform 0.8s;
 }
@@ -52,11 +59,11 @@
   height: 100%;
   border: 2px solid #ccc; /* Add border */
   border-radius: 8px; /* Rounded corners */
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2); /* Shadow to make it look elevated */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Shadow for normal state */
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between; /* Ensure space between elements on back */
   padding: 20px;
   background: white; /* Ensure background is white */
   backface-visibility: hidden;
@@ -85,11 +92,14 @@
   justify-content: center;
 }
 
-.flashcard-description {
-  font-size: 14px; /* Adjust font size for better readability of long text */
-  text-align: left; /* Adjust text alignment for long text content */
-  margin-top: 10px;
-  overflow: auto; /* Make sure text overflows elegantly */
+.flashcard-content-back h3 {
+  margin-top: 0;
+  margin-bottom: 10px;
+}
+
+.flashcard-content-back p {
+  margin: 0;
+  margin-bottom: 10px;
 }
 
 .flashcard-actions {

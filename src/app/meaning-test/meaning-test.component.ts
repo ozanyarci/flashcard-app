@@ -1,24 +1,20 @@
+// src/app/meaning-test/meaning-test.component.ts
+
 import { Component, OnInit } from '@angular/core';
-import { FlashcardService } from '../flashcard.service';
-import { Flashcard } from '../flashcard.service';
+import { FlashcardService, Flashcard } from '../flashcard.service';
 import { CommonModule } from '@angular/common';
-import { MatButtonModule } from '@angular/material/button';
-import { FormsModule } from '@angular/forms';
 import { MatRadioModule } from '@angular/material/radio';
-import { MatToolbarModule } from '@angular/material/toolbar';
-import { MatInputModule } from '@angular/material/input';
-import { MatCardModule } from '@angular/material/card';
-import { MatIconModule } from '@angular/material/icon';
+import { FormsModule } from '@angular/forms';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 
 @Component({
-  selector: 'app-test',
-  templateUrl: './test.component.html',
-  imports: [CommonModule,MatInputModule,MatButtonModule,MatCardModule,MatToolbarModule,FormsModule,MatIconModule,MatRadioModule,RouterLink],
+  selector: 'app-meaning-test',
+  templateUrl: './meaning-test.component.html',
+  imports: [CommonModule,MatRadioModule,FormsModule,RouterLink],
   standalone:true,
-  styleUrls: ['./test.component.css']
+  styleUrls: ['./meaning-test.component.css']
 })
-export class TestComponent implements OnInit {
+export class MeaningTestComponent implements OnInit {
   flashcards: Flashcard[] = [];
   currentQuestionIndex: number = 0;
   options: string[] = [];
@@ -43,8 +39,8 @@ export class TestComponent implements OnInit {
   loadQuestion(): void {
     if (this.flashcards.length > 0 && this.currentQuestionIndex < this.flashcards.length) {
       const currentFlashcard = this.flashcards[this.currentQuestionIndex];
-      this.correctAnswer = currentFlashcard.meaning;
-      this.options = this.generateOptions(currentFlashcard.meaning);
+      this.correctAnswer = currentFlashcard.word;
+      this.options = this.generateOptions(currentFlashcard.word);
       this.immediateFeedback = null;  // Reset feedback for each new question
     }
   }
@@ -53,7 +49,7 @@ export class TestComponent implements OnInit {
     const options = [correctAnswer];
     while (options.length < 4 && this.flashcards.length > 1) {
       const randomIndex = Math.floor(Math.random() * this.flashcards.length);
-      const option = this.flashcards[randomIndex].meaning;
+      const option = this.flashcards[randomIndex].word;
       if (!options.includes(option)) {
         options.push(option);
       }
