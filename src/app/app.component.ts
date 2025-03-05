@@ -5,10 +5,11 @@ import { TestComponent } from './test/test.component';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { FlashcardService } from './flashcard.service';
 import { CommonModule } from '@angular/common';
+import { SentenceTestComponent } from './sentence-test/sentence-test.component';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet,FlashcardComponent,TestComponent,MatToolbarModule, RouterLink, RouterLinkActive,CommonModule],
+  imports: [RouterOutlet,FlashcardComponent,TestComponent,SentenceTestComponent, MatToolbarModule, RouterLink, RouterLinkActive,CommonModule],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })

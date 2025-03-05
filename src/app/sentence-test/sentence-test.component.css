@@ -1,49 +1,39 @@
-/* src/app/test/test.component.css */
+/* src/app/sentence-test/sentence-test.component.css */
 
 .test-container,
 .result-container,
 .no-flashcards-container {
   max-width: 600px;
   margin: 20px auto;
-}
-
-h2, p {
   text-align: center;
-}
-
-.options-group {
-  width: 100%;
-  text-align: left; /* Ensure options text is left-aligned */
-}
-
-mat-radio-group {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  width: 100%;
-}
-
-.option-item {
-  display: flex;
-  align-items: center;
-  margin-bottom: 10px;
-  width: 100%;
-}
-
-.no-flashcards-container {
-  margin-top: 50px;
 }
 
 button {
   margin-top: 10px;
 }
 
-.result-container p {
-  margin-top: 10px;
+.no-flashcards-container {
+  margin-top: 50px;
 }
 
-.center-content {
-  text-align: center; /* Center the content */
+.input-container {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin: 20px 0; /* Add spacing around the input */
+}
+
+.full-width {
+  width: 100%;
+  max-width: 400px; /* Set a max-width for the input field */
+}
+
+mat-form-field {
+  width: 100%;
+}
+
+.result-container p {
+  margin-top: 10px;
 }
 
 /* Modernize buttons */

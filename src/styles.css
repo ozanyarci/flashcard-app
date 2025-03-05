@@ -4,6 +4,32 @@ html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
 /* src/styles.css */
+/* src/styles.css */
+
+/* Global styles for modern buttons */
+.button-modern {
+  background-color: #4caf50; /* Green background color */
+  color: white;
+  font-weight: bold;
+  border-radius: 20px;
+  padding: 10px 20px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  margin: 10px 0; /* Add some margin for better spacing */
+}
+
+.button-modern:hover {
+  background-color: #388e3c; /* Darker green on hover */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+button.mat-raised-button[color="accent"] {
+  background-color: #ff4081; /* Accent color */
+}
+
+button.mat-raised-button[color="accent"]:hover {
+  background-color: #f50057; /* Darker accent color on hover */
+}
 
 @import "~@angular/material/prebuilt-themes/indigo-pink.css";
 
