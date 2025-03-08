@@ -15,8 +15,23 @@
         <mat-label>Example (optional)</mat-label>
         <input matInput [(ngModel)]="newExample" name="example" />
       </mat-form-field>
+      <mat-form-field class="example-full-width">
+        <mat-label>Level</mat-label>
+        <mat-select [(ngModel)]="newLevel" name="level">
+          <mat-option *ngFor="let level of levels" [value]="level">{{ level }}</mat-option>
+        </mat-select>
+      </mat-form-field>
       <button mat-raised-button color="primary" type="submit">{{ editMode ? 'Update' : 'Add' }} Flashcard</button>
     </form>
+  </div>
+
+  <div class="filter-container">
+    <mat-form-field class="example-full-width">
+      <mat-label>Filter by Level</mat-label>
+      <mat-select [(ngModel)]="filterLevel" name="filterLevel" (selectionChange)="applyFilter()">
+        <mat-option *ngFor="let level of filterLevels" [value]="level">{{ level }}</mat-option>
+      </mat-select>
+    </mat-form-field>
   </div>
 
   <div class="navigation-buttons">
@@ -25,12 +40,15 @@
     </button>
 
     <div class="flashcard-wrapper">
-      <div *ngIf="flashcards.length > 0" class="flashcard" (click)="flipCard()">
+      <div *ngIf="flashcards.length > 0; else noFlashcards" class="flashcard" (click)="flipCard()">
         <div class="flashcard-inner" [class.flipped]="isFlipped">
           <div class="flashcard-front">
             <div class="card-number">{{currentFlashcardIndex + 1}}/{{flashcards.length}}</div>
             <div class="flashcard-content">
-              <mat-card-title>{{ flashcards[currentFlashcardIndex]?.word }}</mat-card-title>
+              <mat-card-title>
+                {{ flashcards[currentFlashcardIndex]?.word }}
+                <small>{{ flashcards[currentFlashcardIndex]?.level }}</small> <!-- Display the level -->
+              </mat-card-title>
             </div>
             <div class="flashcard-actions">
               <button mat-mini-fab color="accent" (click)="editFlashcard(currentFlashcardIndex); $event.stopPropagation();"><mat-icon>edit</mat-icon></button>
@@ -50,9 +68,15 @@
           </div>
         </div>
       </div>
+
+      <!-- No flashcards message -->
+      <ng-template #noFlashcards>
+        <p>No flashcards available for the selected filter.</p>
+      </ng-template>
+
     </div>
 
-    <button mat-icon-button (click)="nextFlashcard()" [disabled]="currentFlashcardIndex >= flashcards.length - 1">
+    <button mat-icon-button (click)="nextFlashcard()" [disabled]="currentFlashcardIndex >= this.flashcards.length - 1">
       <mat-icon>arrow_forward</mat-icon>
     </button>
   </div>

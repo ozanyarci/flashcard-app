@@ -5,7 +5,8 @@ import { Injectable } from '@angular/core';
 export interface Flashcard {
   word: string;
   meaning: string;
-  example?: string; // Optional example sentence
+  example?: string;
+  level?: string; // Optional word level
 }
 
 @Injectable({
@@ -19,14 +20,14 @@ export class FlashcardService {
     this.loadFlashcards();
   }
 
-  addFlashcard(word: string, meaning: string, example?: string): void {
-    this.flashcards.push({ word, meaning, example });
+  addFlashcard(word: string, meaning: string, example?: string, level?: string): void {
+    this.flashcards.push({ word, meaning, example, level });
     this.saveFlashcards();
   }
 
-  updateFlashcard(index: number, word: string, meaning: string, example?: string): void {
+  updateFlashcard(index: number, word: string, meaning: string, example?: string, level?: string): void {
     if (index >= 0 && index < this.flashcards.length) {
-      this.flashcards[index] = { word, meaning, example };
+      this.flashcards[index] = { word, meaning, example, level };
       this.saveFlashcards();
     }
   }

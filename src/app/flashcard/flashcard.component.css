@@ -10,6 +10,10 @@
   margin-bottom: 20px; /* Add some spacing between form and flashcards */
 }
 
+.filter-container {
+  margin-bottom: 20px; /* Add some spacing between filter and flashcards */
+}
+
 .example-full-width {
   width: 100%;
 }
