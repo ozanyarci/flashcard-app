@@ -1,5 +1,4 @@
 <!-- src/app/flashcard/flashcard.component.html -->
-
 <div class="flashcard-container">
   <div class="form-container">
     <form (submit)="addOrUpdateFlashcard()">
@@ -21,34 +20,36 @@
           <mat-option *ngFor="let level of levels" [value]="level">{{ level }}</mat-option>
         </mat-select>
       </mat-form-field>
+      <div class="photo-field">
+        <button mat-raised-button color="primary" type="button" (click)="triggerFileInput()">Upload Photo (Optional)</button>
+        <input id="fileInput" type="file" (change)="handleFileInput($event)" hidden />
+        <span *ngIf="newPhoto">Photo selected</span>
+      </div>
       <button mat-raised-button color="primary" type="submit">{{ editMode ? 'Update' : 'Add' }} Flashcard</button>
     </form>
   </div>
-
   <div class="filter-container">
     <mat-form-field class="example-full-width">
       <mat-label>Filter by Level</mat-label>
       <mat-select [(ngModel)]="filterLevel" name="filterLevel" (selectionChange)="applyFilter()">
-        <mat-option *ngFor="let level of filterLevels" [value]="level">{{ level }}</mat-option>
+        <mat-option *ngFor="let filterLevel of filterLevels" [value]="filterLevel">{{ filterLevel }}</mat-option>
       </mat-select>
     </mat-form-field>
   </div>
-
   <div class="navigation-buttons">
     <button mat-icon-button (click)="previousFlashcard()" [disabled]="currentFlashcardIndex === 0">
       <mat-icon>arrow_back</mat-icon>
     </button>
-
     <div class="flashcard-wrapper">
       <div *ngIf="flashcards.length > 0; else noFlashcards" class="flashcard" (click)="flipCard()">
         <div class="flashcard-inner" [class.flipped]="isFlipped">
           <div class="flashcard-front">
-            <div class="card-number">{{currentFlashcardIndex + 1}}/{{flashcards.length}}</div>
+            <div class="card-number">{{ currentFlashcardIndex + 1 }}/{{ flashcards.length }}</div>
             <div class="flashcard-content">
               <mat-card-title>
                 {{ flashcards[currentFlashcardIndex]?.word }}
-                <small>{{ flashcards[currentFlashcardIndex]?.level }}</small> <!-- Display the level -->
               </mat-card-title>
+              <img *ngIf="flashcards[currentFlashcardIndex]?.photo" [src]="flashcards[currentFlashcardIndex]?.photo" alt="Flashcard Image" class="flashcard-image" />
             </div>
             <div class="flashcard-actions">
               <button mat-mini-fab color="accent" (click)="editFlashcard(currentFlashcardIndex); $event.stopPropagation();"><mat-icon>edit</mat-icon></button>
@@ -56,7 +57,7 @@
             </div>
           </div>
           <div class="flashcard-back">
-            <div class="card-number">{{currentFlashcardIndex + 1}}/{{flashcards.length}}</div>
+            <div class="card-number">{{ currentFlashcardIndex + 1 }}/{{ flashcards.length }}</div>
             <div class="flashcard-content-back">
               <h3>Meaning:</h3>
               <p>{{ flashcards[currentFlashcardIndex]?.meaning }}</p>
@@ -68,14 +69,11 @@
           </div>
         </div>
       </div>
-
       <!-- No flashcards message -->
       <ng-template #noFlashcards>
         <p>No flashcards available for the selected filter.</p>
       </ng-template>
-
     </div>
-
     <button mat-icon-button (click)="nextFlashcard()" [disabled]="currentFlashcardIndex >= this.flashcards.length - 1">
       <mat-icon>arrow_forward</mat-icon>
     </button>
