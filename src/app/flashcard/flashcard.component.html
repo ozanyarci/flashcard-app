@@ -20,6 +20,12 @@
           <mat-option *ngFor="let level of levels" [value]="level">{{ level }}</mat-option>
         </mat-select>
       </mat-form-field>
+      <mat-form-field class="example-full-width">
+        <mat-label>Subject</mat-label>
+        <mat-select [(ngModel)]="newSubject" name="subject" required>
+          <mat-option *ngFor="let subject of subjects" [value]="subject">{{ subject }}</mat-option>
+        </mat-select>
+      </mat-form-field>
       <div class="photo-field">
         <button mat-raised-button color="primary" type="button" (click)="triggerFileInput()">Upload Photo (Optional)</button>
         <input id="fileInput" type="file" (change)="handleFileInput($event)" hidden />
@@ -30,8 +36,16 @@
   </div>
   <div class="filter-container">
     <mat-form-field class="example-full-width">
+      <mat-label>Filter by Subject</mat-label>
+      <mat-select [(ngModel)]="filterSubject" name="filterSubject" (selectionChange)="applyFilter()">
+        <mat-option value="All">All</mat-option>
+        <mat-option *ngFor="let subject of subjects" [value]="subject">{{ subject }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field class="example-full-width">
       <mat-label>Filter by Level</mat-label>
       <mat-select [(ngModel)]="filterLevel" name="filterLevel" (selectionChange)="applyFilter()">
+        <mat-option value="All">All</mat-option>
         <mat-option *ngFor="let filterLevel of filterLevels" [value]="filterLevel">{{ filterLevel }}</mat-option>
       </mat-select>
     </mat-form-field>

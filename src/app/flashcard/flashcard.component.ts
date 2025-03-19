@@ -12,6 +12,15 @@ import { MatIconModule } from '@angular/material/icon';
 import {MatSelectModule} from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
 
+export interface Flashcard {
+  word: string;
+  meaning: string;
+  example?: string;
+  level?: string;
+  photo?: string;
+  subject: string; // Subject or Deck
+}
+
 @Component({
   selector: 'app-flashcard',
   imports: [CommonModule,MatInputModule,MatButtonModule,MatCardModule,MatToolbarModule,FormsModule,MatIconModule,MatSelectModule,MatFormFieldModule],
@@ -25,16 +34,19 @@ export class FlashcardComponent {
   newExample: string = ''; // Optional example sentence
   newLevel: string = 'Other'; // Optional word level, default to 'Other'
   newPhoto: string | ArrayBuffer | null = null; // Optional photo stored as a Base64 string
+  newSubject: string = ''; // New subject for the flashcard
+  filterSubject: string = 'All'; // Subject filter, default to 'All'
   filterLevel: string = 'All'; // Level filter, default to 'All'
   editMode: boolean = false;
   currentEditIndex: number | null = null;
-  allFlashcards: { word: string, meaning: string, example?: string, level?: string, photo?: string }[] = [];
-  flashcards: { word: string, meaning: string, example?: string, level?: string, photo?: string }[] = [];
+  allFlashcards: Flashcard[] = [];
+  flashcards: Flashcard[] = [];
   currentFlashcardIndex: number = 0;
   isFlipped: boolean = false;
   currentIndex: number | null = null; // Add new variable to hold current index
   levels = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2', 'Other']; // Levels options
   filterLevels = ['All', 'A1', 'A2', 'B1', 'B2', 'C1', 'C2', 'Other'];
+  subjects = ['English', 'German', 'French', 'Other']; // Example subjects
 
   constructor(private flashcardService: FlashcardService) {}
 
@@ -70,28 +82,24 @@ export class FlashcardComponent {
   }
 
   addOrUpdateFlashcard() {
-    if (this.newWord.trim() && this.newMeaning.trim()) {
+    if (this.newWord.trim() && this.newMeaning.trim() && this.newSubject.trim()) {
+      const flashcard: Flashcard = {
+        word: this.newWord.trim(),
+        meaning: this.newMeaning.trim(),
+        example: this.newExample.trim(),
+        level: this.newLevel,
+        photo: this.newPhoto?.toString(),
+        subject: this.newSubject
+      };
+
       if (this.editMode && this.currentEditIndex !== null) {
-        this.flashcardService.updateFlashcard(
-          this.currentEditIndex,
-          this.newWord.trim(),
-          this.newMeaning.trim(),
-          this.newExample.trim(),
-          this.newLevel,
-          this.newPhoto?.toString()
-        );
+        this.flashcardService.updateFlashcard(this.currentEditIndex, flashcard);
         this.editMode = false;
         this.currentEditIndex = null;
         this.currentIndex = null;
         alert('Flashcard updated successfully.');
       } else {
-        this.flashcardService.addFlashcard(
-          this.newWord.trim(),
-          this.newMeaning.trim(),
-          this.newExample.trim(),
-          this.newLevel,
-          this.newPhoto?.toString()
-        );
+        this.flashcardService.addFlashcard(flashcard);
         this.currentIndex = this.allFlashcards.length;
         alert('Flashcard added successfully.');
       }
@@ -100,7 +108,7 @@ export class FlashcardComponent {
       this.viewUpdatedCard();
       this.isFlipped = false;
     } else {
-      alert('Both Word and Meaning fields are required.');
+      alert('All fields are required.');
     }
   }
 
@@ -111,6 +119,7 @@ export class FlashcardComponent {
     this.newExample = flashcard.example || ''; // Populate example if available
     this.newLevel = flashcard.level || 'Other'; // Populate level if available
     this.newPhoto = flashcard.photo || null; // Populate photo if available
+    this.newSubject = flashcard.subject || ''; // Populate subject if available
     this.editMode = true;
     this.currentEditIndex = index;
     this.currentFlashcardIndex = index; // Show the flashcard being edited
@@ -132,11 +141,11 @@ export class FlashcardComponent {
   }
 
   applyFilter() {
-    if (this.filterLevel === 'All') {
-      this.flashcards = this.allFlashcards;
-    } else {
-      this.flashcards = this.allFlashcards.filter(flashcard => flashcard.level === this.filterLevel);
-    }
+    this.flashcards = this.allFlashcards.filter(flashcard =>
+      (this.filterSubject === 'All' || flashcard.subject === this.filterSubject) &&
+      (this.filterLevel === 'All' || flashcard.level === this.filterLevel)
+    );
+
     // Reset currentFlashcardIndex if filtered out
     if (this.currentFlashcardIndex >= this.flashcards.length) {
       this.currentFlashcardIndex = this.flashcards.length ? this.flashcards.length - 1 : 0;
@@ -173,6 +182,7 @@ export class FlashcardComponent {
     this.newExample = '';
     this.newLevel = 'Other';
     this.newPhoto = null;
+    this.newSubject = '';
     this.editMode = false;
     this.currentEditIndex = null;
     this.currentIndex = null;
