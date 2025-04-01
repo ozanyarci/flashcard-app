@@ -8,6 +8,7 @@ import { CommonModule } from '@angular/common';
 import { SentenceTestComponent } from './sentence-test/sentence-test.component';
 import {MatIconModule} from '@angular/material/icon';
 import {MatMenuModule, MatMenuTrigger} from '@angular/material/menu';
+import { inject } from "@vercel/analytics"
 @Component({
   selector: 'app-root',
   imports: [RouterOutlet,FlashcardComponent,TestComponent,SentenceTestComponent, MatToolbarModule, RouterLink, RouterLinkActive,CommonModule,MatIconModule,MatMenuModule,MatMenuTrigger],
@@ -22,6 +23,7 @@ export class AppComponent {
 
   constructor(private flashcardService: FlashcardService) {
     this.checkScreenWidth();
+    inject();
   }
 
   @HostListener('window:resize', ['$event'])
