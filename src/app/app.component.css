@@ -1,11 +1,11 @@
 /* src/app/app.component.css */
-
 mat-toolbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
   background-color: #3f51b5; /* Toolbar background color */
   color: white; /* Toolbar text color */
+  flex-wrap: wrap; /* Ensure toolbar content wraps on small screens */
 }
 
 .toolbar-buttons {
@@ -14,11 +14,6 @@ mat-toolbar {
 
 .toolbar-buttons button {
   margin-right: 10px;
-}
-
-mat-button {
-  color: white; /* Ensure button text color is white */
-  font-weight: bold;
 }
 
 .button-modern {
@@ -37,4 +32,15 @@ mat-button {
 .router-link-active {
   font-weight: bold;
   color: #ff4081;
+}
+
+/* Make the toolbar responsive */
+@media (max-width: 600px) {
+  .toolbar-buttons {
+    display: none;
+  }
+
+  mat-toolbar .mat-icon-button {
+    display: inline-block;
+  }
 }

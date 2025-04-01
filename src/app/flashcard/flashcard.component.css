@@ -1,16 +1,17 @@
 /* src/app/flashcard/flashcard.component.css */
 .flashcard-container {
-  max-width: 600px;
+  max-width: 800px;
   margin: 20px auto;
   text-align: center;
+  padding: 10px;
 }
 
 .form-container {
-  margin-bottom: 20px; /* Add some spacing between form and flashcards */
+  margin-bottom: 20px;
 }
 
 .filter-container {
-  margin-bottom: 20px; /* Add some spacing between filter and flashcards */
+  margin-bottom: 20px;
 }
 
 .example-full-width {
@@ -20,8 +21,12 @@
 .navigation-buttons {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  margin-top: 20px; /* Add spacing between the buttons and the cards */
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.navigation-buttons button {
+  margin: 0 10px;
 }
 
 .flashcard-wrapper {
@@ -29,25 +34,26 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  width: 100%;
+  margin: 20px auto;
 }
 
 .flashcard {
   perspective: 1000px;
-  margin: 0 20px;
-  position: relative; /* Ensure buttons are positioned relative to flashcard */
-  cursor: pointer; /* Change the cursor to a pointer on hover */
-  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth transition for hover effects */
-}
-
-.flashcard:hover {
-  transform: scale(1.05); /* Slightly scale up the card on hover */
-  box-shadow: 0px 12px 24px rgba(0, 0, 0, 0.2); /* Add a shadow effect on hover */
+  width: 100%;
+  max-width: 300px;
+  margin: auto;
+  position: relative;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .flashcard-inner {
   position: relative;
-  width: 350px; /* Fixed width for consistent appearance */
-  height: 250px; /* Adjust height to fit longer content */
+  margin: auto;
+  width: 100%;
+  max-width: 300px;
+  height: auto;
   transform-style: preserve-3d;
   transition: transform 0.8s;
 }
@@ -59,17 +65,17 @@
 .flashcard-front,
 .flashcard-back {
   position: absolute;
-  width: 100%;
-  height: 100%;
-  border: 2px solid #ccc; /* Add border */
-  border-radius: 8px; /* Rounded corners */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Shadow for normal state */
+  width: 90%; /* Width of flashcards to be 90% */
+  min-height: 250px;
+  border: 3px solid #ccc;
+  border-radius: 12px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: space-between; /* Ensure space between elements on back */
+  justify-content: center;
   padding: 20px;
-  background: white; /* Ensure background is white */
+  background: white;
   backface-visibility: hidden;
 }
 
@@ -83,23 +89,24 @@
   left: 10px;
   font-size: 18px;
   font-weight: bold;
-  color: #000; /* Ensure the number is visible */
+  color: #000;
 }
 
-.flashcard-content {
-  font-size: 24px;
+.flashcard-content,
+.flashcard-content-back {
+  font-size: 20px;
   font-weight: bold;
-  text-align: center; /* Center the text inside the card */
-  flex: 1; /* Take up remaining space in the flex container */
+  text-align: center;
+  flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-direction: column; /* Align content vertically */
+  flex-direction: column;
 }
 
 .flashcard-image {
   max-width: 100%;
-  max-height: 150px; /* Adjust max-height of the image */
+  max-height: 150px;
   margin-top: 10px;
 }
 
@@ -108,22 +115,52 @@
   margin-bottom: 10px;
 }
 
-flashcard-content-back p {
+.flashcard-content-back p {
   margin: 0;
   margin-bottom: 10px;
 }
 
 .flashcard-actions {
-  position: absolute; /* Position buttons absolutely within the card */
-  top: 10px; /* Position at the top */
-  right: 10px; /* Align to the right */
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
   display: flex;
-  gap: 10px; /* Add gap between buttons */
+  gap: 10px;
 }
 
 .photo-field {
-  margin-top: 10px;
-  display: flex;
-  align-items: center;
-  gap: 10px; /* Add some spacing between elements */
+  margin-bottom: 10px;
+}
+
+@media (max-width: 375px) {
+  .flashcard {
+    max-width: 100%;
+    width: 100%;
+    margin: auto;
+  }
+
+  .flashcard-inner {
+    max-width: 95%;
+    width: 95%;
+    margin: auto;
+  }
+
+  .flashcard-content,
+  .flashcard-content-back {
+    font-size: 18px;
+  }
+
+  .flashcard-image {
+    max-height: 120px;
+  }
+
+  .navigation-buttons {
+    flex-direction: row;
+    gap: 10px;
+  }
+
+  .flashcard-container {
+    max-width: 100%;
+    padding: 0 10px;
+  }
 }

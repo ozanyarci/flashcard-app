@@ -31,22 +31,22 @@ export interface Flashcard {
 export class FlashcardComponent {
   newWord: string = '';
   newMeaning: string = '';
-  newExample: string = ''; // Optional example sentence
-  newLevel: string = 'Other'; // Optional word level, default to 'Other'
-  newPhoto: string | ArrayBuffer | null = null; // Optional photo stored as a Base64 string
-  newSubject: string = ''; // New subject for the flashcard
-  filterSubject: string = 'All'; // Subject filter, default to 'All'
-  filterLevel: string = 'All'; // Level filter, default to 'All'
+  newExample: string = '';
+  newLevel: string = 'Other';
+  newPhoto: string | ArrayBuffer | null = null;
+  newSubject: string = '';
+  filterSubject: string = 'All';
+  filterLevel: string = 'All';
   editMode: boolean = false;
   currentEditIndex: number | null = null;
   allFlashcards: Flashcard[] = [];
   flashcards: Flashcard[] = [];
   currentFlashcardIndex: number = 0;
   isFlipped: boolean = false;
-  currentIndex: number | null = null; // Add new variable to hold current index
-  levels = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2', 'Other']; // Levels options
+  currentIndex: number | null = null;
+  levels = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2', 'Other'];
   filterLevels = ['All', 'A1', 'A2', 'B1', 'B2', 'C1', 'C2', 'Other'];
-  subjects = ['English', 'German', 'French', 'Other']; // Example subjects
+  subjects = ['English', 'German', 'French', 'Other'];
 
   constructor(private flashcardService: FlashcardService) {}
 
@@ -60,22 +60,19 @@ export class FlashcardComponent {
   handleFileInput(event: Event): void {
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0];
-
     if (file) {
       if (!file.type.startsWith('image/')) {
         alert('Please upload a valid image file.');
         return;
       }
-
       const maxSize = 5 * 1024 * 1024; // 5MB
       if (file.size > maxSize) {
         alert('The file size exceeds the 5MB limit.');
         return;
       }
-
       const reader = new FileReader();
       reader.onload = (e) => {
-        this.newPhoto = e.target?.result || null; // Ensure `null` if result is undefined
+        this.newPhoto = e.target?.result || null;
       };
       reader.readAsDataURL(file);
     }
@@ -91,7 +88,6 @@ export class FlashcardComponent {
         photo: this.newPhoto?.toString(),
         subject: this.newSubject
       };
-
       if (this.editMode && this.currentEditIndex !== null) {
         this.flashcardService.updateFlashcard(this.currentEditIndex, flashcard);
         this.editMode = false;
@@ -116,13 +112,13 @@ export class FlashcardComponent {
     const flashcard = this.flashcards[index];
     this.newWord = flashcard.word;
     this.newMeaning = flashcard.meaning;
-    this.newExample = flashcard.example || ''; // Populate example if available
-    this.newLevel = flashcard.level || 'Other'; // Populate level if available
-    this.newPhoto = flashcard.photo || null; // Populate photo if available
-    this.newSubject = flashcard.subject || ''; // Populate subject if available
+    this.newExample = flashcard.example || '';
+    this.newLevel = flashcard.level || 'Other';
+    this.newPhoto = flashcard.photo || null;
+    this.newSubject = flashcard.subject || '';
     this.editMode = true;
     this.currentEditIndex = index;
-    this.currentFlashcardIndex = index; // Show the flashcard being edited
+    this.currentFlashcardIndex = index;
   }
 
   deleteFlashcard(index: number) {
@@ -145,8 +141,6 @@ export class FlashcardComponent {
       (this.filterSubject === 'All' || flashcard.subject === this.filterSubject) &&
       (this.filterLevel === 'All' || flashcard.level === this.filterLevel)
     );
-
-    // Reset currentFlashcardIndex if filtered out
     if (this.currentFlashcardIndex >= this.flashcards.length) {
       this.currentFlashcardIndex = this.flashcards.length ? this.flashcards.length - 1 : 0;
     }
@@ -155,14 +149,14 @@ export class FlashcardComponent {
   nextFlashcard() {
     if (this.currentFlashcardIndex < this.flashcards.length - 1) {
       this.currentFlashcardIndex++;
-      this.isFlipped = false; // Reset flip status when new card is shown
+      this.isFlipped = false;
     }
   }
 
   previousFlashcard() {
     if (this.currentFlashcardIndex > 0) {
       this.currentFlashcardIndex--;
-      this.isFlipped = false; // Reset flip status when new card is shown
+      this.isFlipped = false;
     }
   }
 
