@@ -46,7 +46,7 @@ export class SentenceTestComponent implements OnInit {
     if (this.flashcardsWithExamples.length > 0 && this.currentQuestionIndex < this.flashcardsWithExamples.length) {
       const flashcard = this.flashcardsWithExamples[this.currentQuestionIndex];
       this.correctAnswer = flashcard.word;
-      this.exampleSentence = flashcard.example ? flashcard.example.replace(flashcard.word, '__________') : '';
+      this.exampleSentence = flashcard.example ? flashcard.example.toLowerCase().replace(flashcard.word.toLowerCase(), '__________') : '';
       this.immediateFeedback = null; // Reset feedback for new question
       this.userAnswer = '';  // Clear user answer for new question
     }
