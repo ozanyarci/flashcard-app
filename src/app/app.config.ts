@@ -4,7 +4,7 @@ import { provideFirebaseApp, initializeApp } from '@angular/fire/app';
 
 import { routes } from './app.routes';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
-import { environment } from './environments/environment';
+import { environment } from '../environments/environment';
 import { getFirestore, provideFirestore } from '@angular/fire/firestore';
 import { getAuth, provideAuth } from '@angular/fire/auth';
 

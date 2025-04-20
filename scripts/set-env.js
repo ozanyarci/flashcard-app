@@ -20,6 +20,12 @@ export const environment = {
 };
 `;
 
+// Ensure the directory exists
+const envDir = path.join(__dirname, '../src/environments');
+if (!fs.existsSync(envDir)){
+    fs.mkdirSync(envDir, { recursive: true });
+}
+
 // Write the environment files
-fs.writeFileSync('./src/app/environments/environment.ts', environmentTemplate(false));
-fs.writeFileSync('./src/app/environments/environment.prod.ts', environmentTemplate(true));
+fs.writeFileSync(path.join(envDir, 'environment.ts'), environmentTemplate(false));
+fs.writeFileSync(path.join(envDir, 'environment.prod.ts'), environmentTemplate(true));
