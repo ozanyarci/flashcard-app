@@ -2,11 +2,12 @@
   "name": "flashcard-app",
   "version": "0.0.0",
   "scripts": {
-    "ng": "ng",
-    "start": "node scripts/set-env.js && ng serve",
-    "build": "node scripts/set-env.js && ng build",
-    "watch": "ng build --watch --configuration development",
-    "test": "node scripts/set-env.js && ng test"
+    "set-env": "node scripts/set-env.js",
+    "build": "npm run set-env && ng build --configuration=production",
+    "start": "ng serve",
+    "test": "ng test",
+    "lint": "ng lint",
+    "e2e": "ng e2e"
   },
   "private": true,
   "dependencies": {
