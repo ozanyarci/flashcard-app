@@ -1,7 +1,7 @@
 // src/app/sentence-test/sentence-test.component.ts
 
 import { Component, OnInit } from '@angular/core';
-import { FlashcardService, Flashcard } from '../flashcard.service';
+import { FlashcardService } from '../flashcard.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
@@ -10,6 +10,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatIconModule } from '@angular/material/icon';
+import { Flashcard } from '../models/flashcard';
 
 @Component({
   selector: 'app-sentence-test',
@@ -33,13 +34,16 @@ export class SentenceTestComponent implements OnInit {
   constructor(private flashcardService: FlashcardService) { }
 
   ngOnInit(): void {
-    this.flashcards = this.flashcardService.getFlashcards();
-    this.flashcardsWithExamples = this.flashcards.filter(flashcard => flashcard.example?.trim());
-    if (this.flashcardsWithExamples.length > 0) {
-      this.loadQuestion();
-    } else {
-      this.noFlashcards = true;
-    }
+    this.flashcardService.getFlashcards().subscribe(flashcards => {
+      this.flashcards = flashcards;
+      this.flashcardsWithExamples = this.flashcards.filter(flashcard => flashcard.example?.trim());
+      if (this.flashcardsWithExamples.length > 0) {
+        this.loadQuestion();
+      } else {
+        this.noFlashcards = true;
+      }
+    });
+
   }
 
   loadQuestion(): void {

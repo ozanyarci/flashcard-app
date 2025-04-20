@@ -1,11 +1,12 @@
 // src/app/meaning-test/meaning-test.component.ts
 
 import { Component, OnInit } from '@angular/core';
-import { FlashcardService, Flashcard } from '../flashcard.service';
+import { FlashcardService } from '../flashcard.service';
 import { CommonModule } from '@angular/common';
 import { MatRadioModule } from '@angular/material/radio';
 import { FormsModule } from '@angular/forms';
 import { RouterLink, RouterLinkActive } from '@angular/router';
+import { Flashcard } from '../models/flashcard';
 
 @Component({
   selector: 'app-meaning-test',
@@ -28,12 +29,15 @@ export class MeaningTestComponent implements OnInit {
   constructor(private flashcardService: FlashcardService) { }
 
   ngOnInit(): void {
-    this.flashcards = this.flashcardService.getFlashcards();
-    if (this.flashcards.length > 0) {
-      this.loadQuestion();
-    } else {
-      this.noFlashcards = true;
-    }
+    this.flashcardService.getFlashcards().subscribe(flashcards => {
+      this.flashcards = flashcards;
+      if (this.flashcards.length > 0) {
+        this.loadQuestion();
+      } else {
+        this.noFlashcards = true;
+      }
+    });
+
   }
 
   loadQuestion(): void {

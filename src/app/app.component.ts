@@ -6,23 +6,42 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { FlashcardService } from './flashcard.service';
 import { CommonModule } from '@angular/common';
 import { SentenceTestComponent } from './sentence-test/sentence-test.component';
-import {MatIconModule} from '@angular/material/icon';
-import {MatMenuModule, MatMenuTrigger} from '@angular/material/menu';
-import { inject } from "@vercel/analytics"
+import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu';
+import { inject } from "@vercel/analytics";
+import { Flashcard } from './models/flashcard';
+
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet,FlashcardComponent,TestComponent,SentenceTestComponent, MatToolbarModule, RouterLink, RouterLinkActive,CommonModule,MatIconModule,MatMenuModule,MatMenuTrigger],
+  standalone: true,
+  imports: [
+    RouterOutlet,
+    FlashcardComponent,
+    TestComponent,
+    SentenceTestComponent,
+    MatToolbarModule,
+    RouterLink,
+    RouterLinkActive,
+    CommonModule,
+    MatIconModule,
+    MatMenuModule
+  ],
   templateUrl: './app.component.html',
-  styleUrl: './app.component.css'
+  styleUrls: ['./app.component.css']
 })
-
 export class AppComponent {
   @ViewChild(MatMenuTrigger) menuTrigger!: MatMenuTrigger; // Use the non-null assertion operator
   title = 'flashcard-app';
   isMobile = false;
+  flashcardCount: number = 0;
+  flashcards: Flashcard[] = [];
 
   constructor(private flashcardService: FlashcardService) {
     this.checkScreenWidth();
+    this.flashcardService.getFlashcards().subscribe(flashcards => {
+      this.flashcards = flashcards;
+      this.flashcardCount = flashcards.length;
+    });
     inject();
   }
 
@@ -40,6 +59,6 @@ export class AppComponent {
   }
 
   hasEnoughFlashcards(): boolean {
-    return this.flashcardService.getFlashcards().length >= 4;
+    return this.flashcardCount >= 4;
   }
 }

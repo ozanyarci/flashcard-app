@@ -1,4 +1,4 @@
-<!-- src/app/app.component.html -->
+<!-- src/app/app.component.html
 <mat-toolbar color="primary">
   <span>Flashcards App</span>
   <div class="toolbar-buttons" *ngIf="!isMobile; else mobileMenu">
@@ -16,6 +16,30 @@
       <button *ngIf="hasEnoughFlashcards()" mat-menu-item routerLink="/test" routerLinkActive="router-link-active">Test</button>
       <button *ngIf="hasEnoughFlashcards()" mat-menu-item routerLink="/meaning-test" routerLinkActive="router-link-active">Meaning Test</button>
       <button *ngIf="hasEnoughFlashcards()" mat-menu-item routerLink="/sentence-test" routerLinkActive="router-link-active">Sentence Test</button>
+    </mat-menu>
+  </ng-template>
+</mat-toolbar>
+<router-outlet></router-outlet> -->
+
+<mat-toolbar color="primary">
+  <span>Flashcards App</span>
+  <div class="toolbar-buttons" *ngIf="!isMobile; else mobileMenu">
+    <button mat-button class="button-modern" routerLink="/flashcards" routerLinkActive="router-link-active">Flashcards</button>
+    <button *ngIf="hasEnoughFlashcards()" mat-button class="button-modern" routerLink="/test" routerLinkActive="router-link-active">Test</button>
+    <button *ngIf="hasEnoughFlashcards()" mat-button class="button-modern" routerLink="/meaning-test" routerLinkActive="router-link-active">Meaning Test</button>
+    <button *ngIf="hasEnoughFlashcards()" mat-button class="button-modern" routerLink="/sentence-test" routerLinkActive="router-link-active">Sentence Test</button>
+    <button mat-button class="button-modern" routerLink="/signout">Sign Out</button> <!-- Add Sign Out button -->
+  </div>
+  <ng-template #mobileMenu>
+    <button mat-icon-button [matMenuTriggerFor]="menu">
+      <mat-icon>menu</mat-icon>
+    </button>
+    <mat-menu #menu="matMenu">
+      <button mat-menu-item routerLink="/flashcards" routerLinkActive="router-link-active">Flashcards</button>
+      <button *ngIf="hasEnoughFlashcards()" mat-menu-item routerLink="/test" routerLinkActive="router-link-active">Test</button>
+      <button *ngIf="hasEnoughFlashcards()" mat-menu-item routerLink="/meaning-test" routerLinkActive="router-link-active">Meaning Test</button>
+      <button *ngIf="hasEnoughFlashcards()" mat-menu-item routerLink="/sentence-test" routerLinkActive="router-link-active">Sentence Test</button>
+      <button mat-menu-item routerLink="/signout">Sign Out</button> <!-- Add Sign Out item -->
     </mat-menu>
   </ng-template>
 </mat-toolbar>

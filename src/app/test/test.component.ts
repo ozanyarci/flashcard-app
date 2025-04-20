@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { FlashcardService } from '../flashcard.service';
-import { Flashcard } from '../flashcard.service';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { FormsModule } from '@angular/forms';
@@ -10,6 +9,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterLink, RouterLinkActive } from '@angular/router';
+import { Flashcard } from '../models/flashcard';
 
 @Component({
   selector: 'app-test',
@@ -32,12 +32,15 @@ export class TestComponent implements OnInit {
   constructor(private flashcardService: FlashcardService) { }
 
   ngOnInit(): void {
-    this.flashcards = this.flashcardService.getFlashcards();
-    if (this.flashcards.length > 0) {
-      this.loadQuestion();
-    } else {
-      this.noFlashcards = true;
-    }
+    this.flashcardService.getFlashcards().subscribe(flashcards => {
+      this.flashcards = flashcards;
+      if (this.flashcards.length > 0) {
+        this.loadQuestion();
+      } else {
+        this.noFlashcards = true;
+      }
+    });
+
   }
 
   loadQuestion(): void {
