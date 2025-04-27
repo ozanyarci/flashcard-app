@@ -10,6 +10,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { LocalStorageService } from '../local-storage.service'; // Import LocalStorageService
 
 @Component({
   selector: 'app-flashcard',
@@ -38,7 +39,7 @@ export class FlashcardComponent implements OnInit {
   filterSubject: string = 'All';
   filterLevel: string = 'All';
   editMode: boolean = false;
-  currentEditId: string | null = null; // Firestore document ID
+  currentEditId: string | null = null;
   allFlashcards: Flashcard[] = [];
   flashcards: Flashcard[] = [];
   currentFlashcardIndex: number = 0;
@@ -49,7 +50,7 @@ export class FlashcardComponent implements OnInit {
   filterLevels = ['All', 'A1', 'A2', 'B1', 'B2', 'C1', 'C2', 'Other'];
   subjects = ['English', 'German', 'French', 'Other'];
 
-  constructor(private flashcardService: FlashcardService) {}
+  constructor(private flashcardService: FlashcardService, private localStorageService: LocalStorageService) {}
 
   triggerFileInput() {
     const fileInput = document.getElementById('fileInput') as HTMLInputElement;
@@ -89,7 +90,6 @@ export class FlashcardComponent implements OnInit {
         photo: this.newPhoto ? this.newPhoto.toString() : '',
         subject: this.newSubject
       };
-
       if (this.editMode && this.currentEditId) {
         this.flashcardService.updateFlashcard(this.currentEditId, flashcard);
         this.editMode = false;
@@ -99,7 +99,6 @@ export class FlashcardComponent implements OnInit {
         this.flashcardService.addFlashcard(flashcard);
         alert('Flashcard added successfully.');
       }
-
       this.resetForm();
       this.loadFlashcards();
       this.isFlipped = false;
@@ -154,6 +153,12 @@ export class FlashcardComponent implements OnInit {
         ? this.flashcards.length - 1
         : 0;
     }
+  }
+
+  clearLocalStorage() {
+    this.localStorageService.clearAllFlashcards();
+    this.loadFlashcards();
+    alert('All flashcards cleared from local storage');
   }
 
   nextFlashcard() {

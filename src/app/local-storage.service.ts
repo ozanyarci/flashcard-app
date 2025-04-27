@@ -13,23 +13,37 @@ export class LocalStorageService {
   }
 
   addFlashcard(flashcard: Flashcard): void {
-    // Ensure new flashcard has a unique ID (can be timestamp or random string)
     flashcard.id = flashcard.id || this.generateId();
     this.flashcards.push(flashcard);
     this.saveFlashcards();
   }
 
-  updateFlashcard(index: string, flashcard: Flashcard): void {
-    const idx = this.flashcards.findIndex(fc => fc.id === index);
+  updateFlashcard(id: string, flashcard: Flashcard): void {
+    const idx = this.flashcards.findIndex(fc => fc.id === id);
     if (idx !== -1) {
       this.flashcards[idx] = flashcard;
       this.saveFlashcards();
+    } else {
+      console.error(`Flashcard with id ${id} not found for update`);
     }
   }
 
-  deleteFlashcard(index: string): void {
-    this.flashcards = this.flashcards.filter(fc => fc.id !== index);
+  deleteFlashcard(id: string): void {
+    const initialLength = this.flashcards.length;
+    console.log(`Attempting to delete flashcard with id ${id} from local storage`);
+    this.flashcards = this.flashcards.filter(fc => fc.id !== id);
+    if (this.flashcards.length < initialLength) {
+      this.saveFlashcards();
+      console.log(`Flashcard with id ${id} deleted successfully`);
+    } else {
+      console.error(`Flashcard with id ${id} not found for deletion`);
+    }
+  }
+
+  clearAllFlashcards(): void {
+    this.flashcards = [];
     this.saveFlashcards();
+    console.log('All flashcards cleared from local storage');
   }
 
   getFlashcards(): Flashcard[] {

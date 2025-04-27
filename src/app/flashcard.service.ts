@@ -32,34 +32,48 @@ export class FlashcardService {
         this.localStorageService.addFlashcard(flashcard);
         return of();
       })
-    ).subscribe();
+    ).subscribe(() => {
+      // Optionally, re-sync local storage after successful Firebase operation
+    });
   }
 
   updateFlashcard(id: string, flashcard: Flashcard): void {
     this.firebaseService.updateFlashcard(id, flashcard).pipe(
       catchError((err) => {
         console.error(err);
+        this.localStorageService.updateFlashcard(id, flashcard);
         return of(void 0);
       })
-    ).subscribe();
+    ).subscribe(() => {
+      // Optionally, re-sync local storage after successful Firebase operation
+      console.log(`Flashcard with id ${id} updated successfully`);
+    });
   }
 
   deleteFlashcard(id: string): void {
     this.firebaseService.deleteFlashcard(id).pipe(
       catchError((err) => {
         console.error(err);
+        this.localStorageService.deleteFlashcard(id);
         return of(void 0);
       })
-    ).subscribe();
+    ).subscribe(() => {
+      // Optionally, re-sync local storage after successful Firebase operation
+      console.log(`Flashcard with id ${id} deleted successfully`);
+      this.localStorageService.deleteFlashcard(id); // Ensure local storage sync if Firebase is successful
+    });
   }
 
   // Helper method to merge two arrays of flashcards while removing duplicates
   private mergeFlashcards(source1: Flashcard[], source2: Flashcard[]): Flashcard[] {
     const seen = new Set();
     const merged = [...source1, ...source2].filter(flashcard => {
-      const duplicate = seen.has(flashcard.word);
-      seen.add(flashcard.word); // Assuming `word` is unique, you can change this to any unique field
-      return !duplicate;
+      const key = flashcard.id; // Use id as unique identifier
+      if (!seen.has(key)) {
+        seen.add(key);
+        return true;
+      }
+      return false;
     });
     return merged;
   }

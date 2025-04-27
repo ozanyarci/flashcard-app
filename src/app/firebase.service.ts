@@ -4,7 +4,7 @@ import { AuthService } from './auth.service';
 import { Flashcard } from './models/flashcard';
 import { Observable, from, of } from 'rxjs';
 import { switchMap, map, catchError } from 'rxjs/operators';
-import { DocumentReference } from 'firebase/firestore'; // Ensure correct import from firebase
+import { DocumentReference } from 'firebase/firestore';
 
 @Injectable({
   providedIn: 'root',
@@ -16,10 +16,7 @@ export class FirebaseService {
     return this.authService.getUser().pipe(
       switchMap((user) => {
         if (user) {
-          const flashcardsCollection = collection(
-            this.firestore,
-            `users/${user.uid}/flashcards`
-          );
+          const flashcardsCollection = collection(this.firestore, `users/${user.uid}/flashcards`);
           // Fetch documents from Firestore and convert to Observable
           return from(getDocs(flashcardsCollection)).pipe(
             map((snapshot) => {
@@ -48,10 +45,7 @@ export class FirebaseService {
     return this.authService.getUser().pipe(
       switchMap((user) => {
         if (user) {
-          const flashcardsCollection = collection(
-            this.firestore,
-            `users/${user.uid}/flashcards`
-          );
+          const flashcardsCollection = collection(this.firestore, `users/${user.uid}/flashcards`);
           return from(addDoc(flashcardsCollection, flashcard));
         } else {
           throw new Error('User not authenticated');
@@ -69,10 +63,7 @@ export class FirebaseService {
       switchMap((user) => {
         if (user) {
           console.log(`Updating flashcard for user: ${user.uid}, document ID: ${id}`);
-          const flashcardDoc = doc(
-            this.firestore,
-            `users/${user.uid}/flashcards/${id}`
-          );
+          const flashcardDoc = doc(this.firestore, `users/${user.uid}/flashcards/${id}`);
           return from(updateDoc(flashcardDoc, { ...flashcard }));
         } else {
           throw new Error('User not authenticated');
@@ -89,17 +80,15 @@ export class FirebaseService {
     return this.authService.getUser().pipe(
       switchMap((user) => {
         if (user) {
-          const flashcardDoc = doc(
-            this.firestore,
-            `users/${user.uid}/flashcards/${id}`
-          );
+          console.log(`Deleting flashcard for user: ${user.uid}, document ID: ${id}`);
+          const flashcardDoc = doc(this.firestore, `users/${user.uid}/flashcards/${id}`);
           return from(deleteDoc(flashcardDoc));
         } else {
           throw new Error('User not authenticated');
         }
       }),
       catchError((err) => {
-        console.error(err);
+        console.error('Error deleting flashcard:', err);
         throw err;
       })
     );

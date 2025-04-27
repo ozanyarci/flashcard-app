@@ -1,39 +1,55 @@
 <div class="flashcard-container">
   <div class="form-container">
-    <form (submit)="addOrUpdateFlashcard()">
+    <form (ngSubmit)="addOrUpdateFlashcard()">
+      <!-- Word Input Field -->
       <mat-form-field class="example-full-width">
         <mat-label>Word</mat-label>
         <input matInput [(ngModel)]="newWord" name="word" required />
       </mat-form-field>
+
+      <!-- Meaning Input Field -->
       <mat-form-field class="example-full-width">
         <mat-label>Meaning</mat-label>
         <input matInput [(ngModel)]="newMeaning" name="meaning" required />
       </mat-form-field>
+
+      <!-- Example Input Field (Optional) -->
       <mat-form-field class="example-full-width">
         <mat-label>Example (optional)</mat-label>
         <input matInput [(ngModel)]="newExample" name="example" />
       </mat-form-field>
+
+      <!-- Level Selection Field -->
       <mat-form-field class="example-full-width">
         <mat-label>Level</mat-label>
         <mat-select [(ngModel)]="newLevel" name="level">
           <mat-option *ngFor="let level of levels" [value]="level">{{ level }}</mat-option>
         </mat-select>
       </mat-form-field>
+
+      <!-- Subject Selection Field -->
       <mat-form-field class="example-full-width">
         <mat-label>Subject</mat-label>
         <mat-select [(ngModel)]="newSubject" name="subject" required>
           <mat-option *ngFor="let subject of subjects" [value]="subject">{{ subject }}</mat-option>
         </mat-select>
       </mat-form-field>
+
+      <!-- Photo Upload Field -->
       <div class="photo-field">
         <button mat-raised-button color="primary" type="button" (click)="triggerFileInput()">Upload Photo (Optional)</button>
         <input id="fileInput" type="file" (change)="handleFileInput($event)" hidden />
         <span *ngIf="newPhoto">Photo selected</span>
       </div>
+
+      <!-- Add or Update Button -->
       <button mat-raised-button color="primary" type="submit">{{ editMode ? 'Update' : 'Add' }} Flashcard</button>
     </form>
   </div>
+
+  <!-- Filter Container -->
   <div class="filter-container">
+    <!-- Filter by Subject -->
     <mat-form-field class="example-full-width">
       <mat-label>Filter by Subject</mat-label>
       <mat-select [(ngModel)]="filterSubject" name="filterSubject" (selectionChange)="applyFilter()">
@@ -41,6 +57,8 @@
         <mat-option *ngFor="let subject of subjects" [value]="subject">{{ subject }}</mat-option>
       </mat-select>
     </mat-form-field>
+
+    <!-- Filter by Level -->
     <mat-form-field class="example-full-width">
       <mat-label>Filter by Level</mat-label>
       <mat-select [(ngModel)]="filterLevel" name="filterLevel" (selectionChange)="applyFilter()">
@@ -49,6 +67,8 @@
       </mat-select>
     </mat-form-field>
   </div>
+
+  <!-- Navigation Buttons -->
   <div class="navigation-buttons">
     <button mat-icon-button (click)="previousFlashcard()" [disabled]="currentFlashcardIndex === 0">
       <mat-icon>arrow_back</mat-icon>
@@ -56,8 +76,12 @@
     <button mat-icon-button (click)="nextFlashcard()" [disabled]="currentFlashcardIndex >= this.flashcards.length - 1">
       <mat-icon>arrow_forward</mat-icon>
     </button>
+    <button mat-raised-button color="warn" (click)="clearLocalStorage()">Clear Local Storage</button> <!-- Button to clear local storage -->
   </div>
+
+  <!-- Flashcards Wrapper -->
   <div class="flashcard-wrapper">
+    <!-- Display Flashcards -->
     <div *ngIf="flashcards.length > 0; else noFlashcards" class="flashcard" (click)="flipCard()">
       <div class="flashcard-inner" [class.flipped]="isFlipped">
         <div class="flashcard-front">
@@ -90,7 +114,8 @@
         </div>
       </div>
     </div>
-    <!-- No flashcards message -->
+
+    <!-- No Flashcards Message -->
     <ng-template #noFlashcards>
       <p>No flashcards available for the selected filter.</p>
     </ng-template>
