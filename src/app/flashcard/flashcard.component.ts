@@ -96,7 +96,7 @@ export class FlashcardComponent implements OnInit {
         this.currentEditId = null;
         alert('Flashcard updated successfully.');
       } else {
-        this.flashcardService.addFlashcard(flashcard);
+        this.flashcardService.addFlashcard(flashcard).subscribe();
         alert('Flashcard added successfully.');
       }
       this.resetForm();
@@ -159,6 +159,14 @@ export class FlashcardComponent implements OnInit {
     this.localStorageService.clearAllFlashcards();
     this.loadFlashcards();
     alert('All flashcards cleared from local storage');
+  }
+
+  openToPublic(index: number) {
+    const flashcard = this.flashcards[index];
+    flashcard.public = true;
+    this.flashcardService.addPublicFlashcard(flashcard).subscribe(() => {
+      alert('Flashcard opened to public successfully.');
+    });
   }
 
   nextFlashcard() {

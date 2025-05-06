@@ -1,7 +1,7 @@
 <mat-card class="sign-in-card">
   <mat-card-title>Sign In</mat-card-title>
   <mat-card-content>
-    <form (ngSubmit)="signIn()">
+    <form *ngIf="!displayNameRequired; else setDisplayNameForm" (ngSubmit)="signIn()">
       <mat-form-field appearance="fill">
         <mat-label>Email</mat-label>
         <input matInput type="email" [(ngModel)]="email" name="email" required>
@@ -12,6 +12,15 @@
       </mat-form-field>
       <button mat-raised-button color="primary" type="submit">Sign In</button>
     </form>
-    <p>Don't have an account? <a routerLink="/signup">Sign Up</a></p>
+    <ng-template #setDisplayNameForm>
+      <form (ngSubmit)="saveDisplayName()">
+        <mat-form-field appearance="fill">
+          <mat-label>Display Name</mat-label>
+          <input matInput type="text" [(ngModel)]="displayName" name="displayName" required>
+        </mat-form-field>
+        <button mat-raised-button color="primary" type="submit">Save Display Name</button>
+      </form>
+    </ng-template>
+    <p *ngIf="!displayNameRequired">Don't have an account? <a routerLink="/signup">Sign Up</a></p>
   </mat-card-content>
 </mat-card>

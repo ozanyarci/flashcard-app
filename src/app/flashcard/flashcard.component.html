@@ -1,4 +1,5 @@
 <div class="flashcard-container">
+  <!-- Form Container -->
   <div class="form-container">
     <form (ngSubmit)="addOrUpdateFlashcard()">
       <!-- Word Input Field -->
@@ -98,6 +99,9 @@
             </button>
             <button mat-mini-fab color="warn" (click)="deleteFlashcard(currentFlashcardIndex); $event.stopPropagation();">
               <mat-icon>delete</mat-icon>
+            </button>
+            <button mat-mini-fab color="primary" (click)="openToPublic(currentFlashcardIndex); $event.stopPropagation();">
+              <mat-icon>public</mat-icon>
             </button>
           </div>
         </div>

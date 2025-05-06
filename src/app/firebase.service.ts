@@ -1,10 +1,10 @@
-import { Firestore, collection, doc, getDocs, addDoc, updateDoc, deleteDoc } from '@angular/fire/firestore';
+import { Firestore, collection, doc, getDocs, addDoc, updateDoc, deleteDoc, getDoc } from '@angular/fire/firestore';
 import { Injectable } from '@angular/core';
 import { AuthService } from './auth.service';
-import { Flashcard } from './models/flashcard';
+import { Flashcard, Creator } from './models/flashcard';
 import { Observable, from, of } from 'rxjs';
-import { switchMap, map, catchError } from 'rxjs/operators';
-import { DocumentReference } from 'firebase/firestore';
+import { switchMap, map, catchError, concatMap } from 'rxjs/operators';
+import { DocumentData, DocumentReference } from '@angular/fire/firestore';
 
 @Injectable({
   providedIn: 'root',
@@ -17,7 +17,6 @@ export class FirebaseService {
       switchMap((user) => {
         if (user) {
           const flashcardsCollection = collection(this.firestore, `users/${user.uid}/flashcards`);
-          // Fetch documents from Firestore and convert to Observable
           return from(getDocs(flashcardsCollection)).pipe(
             map((snapshot) => {
               return snapshot.docs.map((doc) => {
@@ -26,7 +25,7 @@ export class FirebaseService {
               });
             }),
             catchError((err) => {
-              console.error(err);
+              console.error('Error fetching flashcards:', err);
               return of([]); // Return an empty array on error
             })
           );
@@ -41,18 +40,27 @@ export class FirebaseService {
     );
   }
 
-  addFlashcard(flashcard: Flashcard): Observable<DocumentReference> {
+  addFlashcard(flashcard: Flashcard): Observable<DocumentReference<DocumentData>> {
     return this.authService.getUser().pipe(
       switchMap((user) => {
         if (user) {
           const flashcardsCollection = collection(this.firestore, `users/${user.uid}/flashcards`);
-          return from(addDoc(flashcardsCollection, flashcard));
+          return from(addDoc(flashcardsCollection, flashcard)).pipe(
+            map((docRef: DocumentReference) => {
+              console.log('Flashcard added successfully');
+              return docRef;
+            }),
+            catchError((err) => {
+              console.error('Error adding flashcard:', err);
+              throw err;
+            })
+          );
         } else {
           throw new Error('User not authenticated');
         }
       }),
       catchError((err) => {
-        console.error(err);
+        console.error('Error fetching user:', err);
         throw err;
       })
     );
@@ -62,34 +70,149 @@ export class FirebaseService {
     return this.authService.getUser().pipe(
       switchMap((user) => {
         if (user) {
-          console.log(`Updating flashcard for user: ${user.uid}, document ID: ${id}`);
           const flashcardDoc = doc(this.firestore, `users/${user.uid}/flashcards/${id}`);
-          return from(updateDoc(flashcardDoc, { ...flashcard }));
+          return from(updateDoc(flashcardDoc, { ...flashcard })).pipe(
+            map(() => {
+              console.log('Flashcard updated successfully');
+            }),
+            catchError((err) => {
+              console.error('Error updating flashcard:', err);
+              throw err;
+            })
+          );
         } else {
           throw new Error('User not authenticated');
         }
       }),
       catchError((err) => {
-        console.error('Error updating flashcard:', err);
+        console.error('Error fetching user:', err);
         throw err;
       })
     );
   }
 
-  deleteFlashcard(id: string): Observable<void> {
+  deleteFlashcard(flashcardId: string, isPublic: boolean = false): Observable<void> {
+    if (!flashcardId) {
+      console.error('Flashcard ID is undefined');
+      return of(void 0);
+    }
+    console.log(`Attempting to delete flashcard with Firestore ID: ${flashcardId}`);
     return this.authService.getUser().pipe(
       switchMap((user) => {
         if (user) {
-          console.log(`Deleting flashcard for user: ${user.uid}, document ID: ${id}`);
-          const flashcardDoc = doc(this.firestore, `users/${user.uid}/flashcards/${id}`);
-          return from(deleteDoc(flashcardDoc));
+          const flashcardDoc = isPublic
+            ? doc(this.firestore, `publicFlashcards/${flashcardId}`)
+            : doc(this.firestore, `users/${user.uid}/flashcards/${flashcardId}`);
+          console.log(`Flashcard path: ${flashcardDoc.path}`);
+          return from(getDoc(flashcardDoc)).pipe(
+            switchMap((docSnapshot) => {
+              if (docSnapshot.exists()) {
+                const data = docSnapshot.data();
+                console.log(`Document data: ${JSON.stringify(data)}`);
+                // Check the 'createdBy' field inside the document
+                if (data && data['createdBy'] === user.uid) {
+                  return from(deleteDoc(flashcardDoc)).pipe(
+                    map(() => {
+                      console.log('Flashcard deleted successfully');
+                    }),
+                    catchError((err) => {
+                      console.error('Error deleting flashcard:', err);
+                      throw err;
+                    })
+                  );
+                } else {
+                  console.warn('No permission to delete this flashcard');
+                  return of(void 0);
+                }
+              } else {
+                console.warn('Flashcard does not exist');
+                return of(void 0);
+              }
+            })
+          );
+        } else {
+          console.error('User not authenticated');
+          return of(void 0);
+        }
+      }),
+      catchError((err) => {
+        console.error('Error fetching user:', err);
+        throw err;
+      })
+    );
+  }
+
+  addPublicFlashcard(flashcard: Flashcard): Observable<void> {
+    return this.authService.getUser().pipe(
+      switchMap((user) => {
+        if (user) {
+          const publicFlashcardsCollection = collection(this.firestore, 'publicFlashcards');
+          flashcard.createdBy = user.uid; // Ensure 'createdBy' field is set
+          return from(addDoc(publicFlashcardsCollection, flashcard)).pipe(
+            map(() => {
+              console.log('Public flashcard added successfully');
+            }),
+            catchError((err) => {
+              console.error('Error adding public flashcard:', err);
+              throw err;
+            })
+          );
         } else {
           throw new Error('User not authenticated');
         }
       }),
       catchError((err) => {
-        console.error('Error deleting flashcard:', err);
+        console.error('Error fetching user:', err);
         throw err;
+      })
+    );
+  }
+
+  // Fetch creator information from Firestore
+  getCreator(uid: string): Observable<Creator> {
+    console.log(`Fetching creator information for UID: ${uid}`);
+    const userDoc = doc(this.firestore, `users/${uid}`);
+    return from(getDoc(userDoc)).pipe(
+      map((docSnapshot) => {
+        if (docSnapshot.exists()) {
+          const data = docSnapshot.data();
+          const displayName = data ? data['displayName'] : 'Unknown';
+          console.log(`Fetched creator: ${displayName}`);
+          return { name: displayName }; // Return displayName instead of UID
+        } else {
+          console.warn(`Creator with UID ${uid} not found`);
+          return { name: 'Unknown' };
+        }
+      }),
+      catchError((err) => {
+        console.error(`Error fetching creator information for UID ${uid}:`, err);
+        return of({ name: 'Unknown' });
+      })
+    );
+  }
+
+  getPublicFlashcards(): Observable<Flashcard[]> {
+    const publicFlashcardsCollection = collection(this.firestore, 'publicFlashcards');
+    return from(getDocs(publicFlashcardsCollection)).pipe(
+      concatMap(snapshot =>
+        from(Promise.all(snapshot.docs.map(doc => {
+          const data = doc.data() as Flashcard;
+          const createdBy = data.createdBy;
+          const flashcardWithId = { ...data, id: doc.id };
+
+          if (createdBy) {
+            return this.getCreator(createdBy).pipe(
+              map(creator => ({ ...flashcardWithId, creator }))
+            ).toPromise();
+          } else {
+            return Promise.resolve({ ...flashcardWithId, creator: { name: 'Unknown' } });
+          }
+        })))
+      ),
+      map(flashcards => flashcards.filter(flashcard => flashcard !== undefined) as Flashcard[]),
+      catchError(err => {
+        console.error('Error fetching public flashcards:', err);
+        return of([]); // Return an empty array on error
       })
     );
   }

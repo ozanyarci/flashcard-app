@@ -6,4 +6,12 @@ export interface Flashcard {
   level?: string;
   photo?: string | null; // Optional photo field
   subject: string; // Subject or Deck
+  createdBy?: string | undefined;  // Add `createdBy` field to Flashcard
+  creator?: Creator;  // Add `creator` field to Flashcard
+  public?: boolean;   // Add `public` field to Flashcard
 }
+
+export interface Creator {
+  name: string;
+}
+

@@ -18,14 +18,22 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 export class SignupComponent {
   email: string = '';
   password: string = '';
+  displayName: string = ''; // Add displayName
+
   constructor(private authService: AuthService, private router: Router) {}
 
   async signUp() {
     try {
-      await this.authService.signUp(this.email, this.password).toPromise();
+      await this.authService.signUp(this.email, this.password, this.displayName).toPromise();
       this.router.navigate(['/flashcards']);
     } catch (error) {
-      alert('Sign-up error');
+      // Handle error with type assertion
+      console.error('Sign-up error', error);
+      if (error instanceof Error) {
+        alert('Sign-up error: ' + error.message);
+      } else {
+        alert('Sign-up error: Unknown error occurred');
+      }
     }
   }
 }
