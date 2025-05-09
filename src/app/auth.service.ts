@@ -28,7 +28,7 @@ export class AuthService {
             map((docSnapshot) => {
               if (docSnapshot.exists()) {
                 const data = docSnapshot.data();
-                const displayName = data ? data['displayName'] : null;
+                const displayName = data ? data['displayName'] : null; // Access with ['displayName']
                 if (displayName) {
                   return { hasDisplayName: true, displayName };
                 } else {
@@ -81,6 +81,24 @@ export class AuthService {
       catchError((error) => {
         console.error(`Error updating displayName in Firestore: ${error}`);
         throw new Error(`Error updating displayName in Firestore: ${error.message || error}`);
+      })
+    );
+  }
+
+  getUserDisplayName(uid: string): Observable<string | null> {
+    const userDoc = doc(this.firestore, `users/${uid}`);
+    return from(getDoc(userDoc)).pipe(
+      map((docSnapshot) => {
+        if (docSnapshot.exists()) {
+          const data = docSnapshot.data();
+          return data ? data['displayName'] : null; // Access with ['displayName']
+        } else {
+          return null;
+        }
+      }),
+      catchError((error) => {
+        console.error(`Error fetching displayName: ${error}`);
+        throw new Error(`Error fetching displayName: ${error.message || error}`);
       })
     );
   }

@@ -25,8 +25,9 @@ export class SigninComponent {
   async signIn() {
     try {
       const result = await this.authService.signIn(this.email, this.password).toPromise();
-      if (result.hasDisplayName) {
-        this.router.navigate(['/home'], { state: { displayName: result.displayName } });
+      if (result && result.hasDisplayName) {
+        const displayName = result.displayName ?? 'User';
+        this.router.navigate(['/home'], { state: { displayName } });
       } else {
         this.displayNameRequired = true;
       }
