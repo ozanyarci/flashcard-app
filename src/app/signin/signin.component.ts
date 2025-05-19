@@ -20,14 +20,14 @@ export class SigninComponent {
   password: string = '';
   displayName: string = '';
   displayNameRequired: boolean = false;
+
   constructor(private authService: AuthService, private router: Router) {}
 
   async signIn() {
     try {
       const result = await this.authService.signIn(this.email, this.password).toPromise();
       if (result && result.hasDisplayName) {
-        const displayName = result.displayName ?? 'User';
-        this.router.navigate(['/home'], { state: { displayName } });
+        this.router.navigate(['/flashcards']);
       } else {
         this.displayNameRequired = true;
       }
@@ -44,10 +44,10 @@ export class SigninComponent {
 
   async saveDisplayName() {
     try {
-      const user = await this.authService.getUser().toPromise();
+      const user = await this.authService.getUserPromise();
       if (user) {
         await this.authService.updateDisplayName(user.uid, this.displayName).toPromise();
-        this.router.navigate(['/home'], { state: { displayName: this.displayName } });
+        this.router.navigate(['/flashcards']);
       }
     } catch (error) {
       console.error('Error saving display name', error);

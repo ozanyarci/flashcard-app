@@ -18,6 +18,14 @@ export class AuthService {
     });
   }
 
+  getUserPromise(): Promise<User | null> {
+    return new Promise((resolve, reject) => {
+      onAuthStateChanged(this.auth, (user) => {
+        resolve(user);
+      }, (error) => reject(error));
+    });
+  }
+
   signIn(email: string, password: string): Observable<{ hasDisplayName: boolean, displayName?: string }> {
     return from(signInWithEmailAndPassword(this.auth, email, password)).pipe(
       switchMap((userCredential) => {

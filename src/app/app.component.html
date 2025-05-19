@@ -1,27 +1,25 @@
 <mat-toolbar color="primary">
   <span>Flashcards App</span>
-  <div class="toolbar-buttons" *ngIf="!isMobile; else mobileMenu">
+  <div class="toolbar-buttons" *ngIf="!isMobile">
     <button mat-button class="button-modern" routerLink="/flashcards" routerLinkActive="router-link-active">Flashcards</button>
-    <button  mat-menu-item class="button-modern" routerLink="/public-flashcards" routerLinkActive="router-link-active">Public Flashcards</button>
+    <button mat-menu-item class="button-modern" routerLink="/public-flashcards" routerLinkActive="router-link-active">Public Flashcards</button>
     <button *ngIf="hasEnoughFlashcards()" mat-button class="button-modern" routerLink="/test" routerLinkActive="router-link-active">Test</button>
     <button *ngIf="hasEnoughFlashcards()" mat-button class="button-modern" routerLink="/meaning-test" routerLinkActive="router-link-active">Meaning Test</button>
     <button *ngIf="hasEnoughFlashcards()" mat-button class="button-modern" routerLink="/sentence-test" routerLinkActive="router-link-active">Sentence Test</button>
-    <button mat-button class="button-modern" routerLink="/signout">Sign Out</button> <!-- Add Sign Out button -->
-    <span *ngIf="displayName" class="button-modern">Welcome, {{ displayName }}</span>
+    <button mat-button class="button-modern" routerLink="/signout">Sign Out</button>
+    <div class="welcome-message" *ngIf="displayName">Welcome, {{ displayName }}</div>
   </div>
-  <ng-template #mobileMenu>
-    <button mat-icon-button [matMenuTriggerFor]="menu">
-      <mat-icon>menu</mat-icon>
-    </button>
-    <mat-menu #menu="matMenu">
-      <button mat-menu-item routerLink="/flashcards" routerLinkActive="router-link-active">Flashcards</button>
-      <button  mat-menu-item routerLink="/public-flashcards" routerLinkActive="router-link-active">Public Flashcards</button>
-      <button *ngIf="hasEnoughFlashcards()" mat-menu-item routerLink="/test" routerLinkActive="router-link-active">Test</button>
-      <button *ngIf="hasEnoughFlashcards()" mat-menu-item routerLink="/meaning-test" routerLinkActive="router-link-active">Meaning Test</button>
-      <button *ngIf="hasEnoughFlashcards()" mat-menu-item routerLink="/sentence-test" routerLinkActive="router-link-active">Sentence Test</button>
-      <button mat-menu-item routerLink="/signout">Sign Out</button> <!-- Add Sign Out item -->
-      <span *ngIf="displayName" class="button-modern">Welcome, {{ displayName }}</span>
-    </mat-menu>
-  </ng-template>
+  <button mat-icon-button *ngIf="isMobile" [matMenuTriggerFor]="mobileMenu">
+    <mat-icon>menu</mat-icon>
+  </button>
+  <mat-menu #mobileMenu="matMenu">
+    <button mat-menu-item routerLink="/flashcards" routerLinkActive="router-link-active">Flashcards</button>
+    <button mat-menu-item routerLink="/public-flashcards" routerLinkActive="router-link-active">Public Flashcards</button>
+    <button *ngIf="hasEnoughFlashcards()" mat-menu-item routerLink="/test" routerLinkActive="router-link-active">Test</button>
+    <button *ngIf="hasEnoughFlashcards()" mat-menu-item routerLink="/meaning-test" routerLinkActive="router-link-active">Meaning Test</button>
+    <button *ngIf="hasEnoughFlashcards()" mat-menu-item routerLink="/sentence-test" routerLinkActive="router-link-active">Sentence Test</button>
+    <button mat-menu-item routerLink="/signout">Sign Out</button>
+    <div class="welcome-message" *ngIf="displayName">Welcome, {{ displayName }}</div>
+  </mat-menu>
 </mat-toolbar>
 <router-outlet></router-outlet>

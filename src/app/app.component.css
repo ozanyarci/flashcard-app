@@ -10,6 +10,7 @@ mat-toolbar {
 
 .toolbar-buttons {
   display: flex;
+  align-items: center; /* Vertically align items */
 }
 
 .toolbar-buttons button {
@@ -34,6 +35,12 @@ mat-toolbar {
   color: #ff4081;
 }
 
+.welcome-message {
+  padding-left: 16px;
+  font-size: 14px;
+  color: white;
+}
+
 /* Make the toolbar responsive */
 @media (max-width: 600px) {
   .toolbar-buttons {
@@ -42,5 +49,21 @@ mat-toolbar {
 
   mat-toolbar .mat-icon-button {
     display: inline-block;
+  }
+
+  .welcome-message {
+    flex-basis: 100%; /* Ensure it takes up full width */
+    text-align: center;
+    padding-top: 10px;
+    font-size: 12px; /* Optionally adjust the size for mobile view */
+    color: #000; /* Change the color for welcome message in mobile view */
+  }
+
+  mat-menu .mat-menu-content {
+    color: #000; /* Ensure all text within the menu has a visible color */
+  }
+
+  mat-menu .mat-menu-item {
+    color: #000; /* Ensure menu items text is visible */
   }
 }
