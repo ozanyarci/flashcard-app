@@ -1,7 +1,7 @@
 <div class="public-flashcards-container">
   <h2>Public Flashcards</h2>
   <ng-container *ngFor="let creatorId of getCreatorKeys()">
-    <h3>Creator: {{ publicFlashcardsByCreator[creatorId][0]?.creator?.name }}</h3> <!-- Display creator name -->
+    <h3>Creator: {{ publicFlashcardsByCreator[creatorId][0]?.creator?.name }}</h3>
     <ng-container *ngIf="creatorId === currentUserUid">
       <button mat-raised-button color="warn" (click)="deleteAllFlashcardsByCreator(creatorId)">
         Delete All Flashcards by Creator
@@ -16,7 +16,7 @@
           <p><strong>Level:</strong> {{ flashcard.level }}</p>
           <p><strong>Subject:</strong> {{ flashcard.subject }}</p>
           <img *ngIf="flashcard.photo" [src]="flashcard.photo" alt="Flashcard Image">
-          <p><strong>Creator:</strong> {{ flashcard.creator?.name || 'Unknown' }}</p> <!-- Display creator information -->
+          <p><strong>Creator:</strong> {{ flashcard.creator?.name || 'Unknown' }}</p>
         </mat-card-content>
       </mat-card>
     </div>

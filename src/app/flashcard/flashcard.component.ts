@@ -88,19 +88,30 @@ export class FlashcardComponent implements OnInit {
         example: this.newExample.trim(),
         level: this.newLevel,
         photo: this.newPhoto ? this.newPhoto.toString() : '',
-        subject: this.newSubject
+        subject: this.newSubject,
       };
+
       if (this.editMode && this.currentEditId) {
-        this.flashcardService.updateFlashcard(this.currentEditId, flashcard);
-        this.editMode = false;
-        this.currentEditId = null;
-        alert('Flashcard updated successfully.');
+        this.flashcardService.updateFlashcard(this.currentEditId, flashcard).subscribe(() => {
+          this.editMode = false;
+          this.currentEditId = null;
+          alert('Flashcard updated successfully.');
+          this.loadFlashcards();
+        }, error => {
+          console.error('Error updating flashcard:', error);
+          alert('Error updating flashcard.');
+        });
       } else {
-        this.flashcardService.addFlashcard(flashcard).subscribe();
-        alert('Flashcard added successfully.');
+        this.flashcardService.addFlashcard(flashcard).subscribe(() => {
+          alert('Flashcard added successfully.');
+          this.loadFlashcards();
+        }, error => {
+          console.error('Error adding flashcard:', error);
+          alert('Error adding flashcard.');
+        });
       }
+
       this.resetForm();
-      this.loadFlashcards();
       this.isFlipped = false;
     } else {
       alert('All fields are required.');
@@ -123,14 +134,16 @@ export class FlashcardComponent implements OnInit {
   deleteFlashcard(index: number) {
     const flashcardId = this.flashcards[index].id;
     if (flashcardId) {
-      this.flashcardService.deleteFlashcard(flashcardId);
-      alert('Flashcard deleted successfully.');
-      this.loadFlashcards();
+      this.flashcardService.deleteFlashcard(flashcardId).subscribe(() => {
+        alert('Flashcard deleted successfully.');
+        this.loadFlashcards();
+      }, error => {
+        console.error('Error deleting flashcard:', error);
+        alert('Error deleting flashcard.');
+      });
     }
     if (this.currentFlashcardIndex >= this.flashcards.length) {
-      this.currentFlashcardIndex = this.flashcards.length
-        ? this.flashcards.length - 1
-        : 0;
+      this.currentFlashcardIndex = this.flashcards.length ? this.flashcards.length - 1 : 0;
     }
     this.isFlipped = false;
   }
@@ -149,9 +162,7 @@ export class FlashcardComponent implements OnInit {
         (this.filterLevel === 'All' || flashcard.level === this.filterLevel)
     );
     if (this.currentFlashcardIndex >= this.flashcards.length) {
-      this.currentFlashcardIndex = this.flashcards.length
-        ? this.flashcards.length - 1
-        : 0;
+      this.currentFlashcardIndex = this.flashcards.length ? this.flashcards.length - 1 : 0;
     }
   }
 

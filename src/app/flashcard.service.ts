@@ -14,7 +14,6 @@ export class FlashcardService {
 
   getFlashcards(): Observable<Flashcard[]> {
     return this.firebaseService.getFlashcards().pipe(
-      // additional logic if needed
       catchError((err) => {
         console.error('Error fetching flashcards from Firebase:', err);
         return of(this.localStorageService.getFlashcards());
@@ -40,8 +39,8 @@ export class FlashcardService {
     );
   }
 
-  deleteFlashcard(id: string, isPublic: boolean = false): Observable<void> {
-    return this.firebaseService.deleteFlashcard(id, isPublic).pipe(
+  deleteFlashcard(id: string): Observable<void> {
+    return this.firebaseService.deleteFlashcard(id).pipe(
       catchError((err) => {
         console.error('Error deleting flashcard:', err);
         return of(void 0);
