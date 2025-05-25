@@ -1,0 +1,33 @@
+<!-- src/app/image-test/image-test.component.html -->
+<div class="image-test-container">
+  <h2>Image Test</h2>
+
+  <div *ngIf="allAnswered" class="all-answered">
+    <p>Congratulations! You have answered all the image questions.</p>
+    <p>You answered {{ correctAnswers }} out of {{ flashcards.length }} correctly.</p>
+    <button mat-raised-button color="primary" (click)="goToFlashcards()">Go to Flashcards</button>
+  </div>
+
+  <div *ngIf="currentFlashcard && !allAnswered" class="flashcard-test">
+    <img [src]="currentFlashcard.photo" alt="Flashcard Image" class="flashcard-image">
+
+    <div class="choices">
+      <button *ngFor="let choice of choices" mat-raised-button (click)="checkAnswer(choice)">
+        {{ choice }}
+      </button>
+    </div>
+  </div>
+
+  <div *ngIf="!currentFlashcard && !allAnswered" class="no-flashcards">
+    <p>No flashcards available.</p>
+  </div>
+
+  <button
+    mat-raised-button
+    color="primary"
+    (click)="nextQuestion()"
+    [disabled]="!currentFlashcard || allAnswered"
+    *ngIf="!allAnswered">
+    Next Question
+  </button>
+</div>

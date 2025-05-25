@@ -1,0 +1,28 @@
+/* src/app/image-test/image-test.component.css */
+.image-test-container {
+  max-width: 800px;
+  margin: 20px auto;
+  text-align: center;
+  padding: 10px;
+}
+
+.flashcard-test {
+  margin-bottom: 20px;
+}
+
+.flashcard-image {
+  max-width: 100%;
+  max-height: 300px;
+  margin-bottom: 20px;
+}
+
+.choices {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.no-flashcards, .all-answered {
+  margin-top: 20px;
+}

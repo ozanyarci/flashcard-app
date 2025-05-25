@@ -10,12 +10,14 @@ import { SignupComponent } from './signup/signup.component';
 import { AuthGuard } from './auth.guard';
 import { SignoutComponent } from './signout/signout.component';
 import { PublicFlashcardsComponent } from './public-flashcards/public-flashcards.component';
+import { ImageTestComponent } from './image-test/image-test.component';
 
 export const routes: Routes = [
   { path: 'flashcards', component: FlashcardComponent, canActivate: [AuthGuard] },
   { path: 'test', component: TestComponent, canActivate: [AuthGuard]},
   { path: 'meaning-test', component: MeaningTestComponent, canActivate: [AuthGuard] },
   { path: 'sentence-test', component: SentenceTestComponent, canActivate: [AuthGuard] },
+  { path: 'image-test', component: ImageTestComponent, canActivate: [AuthGuard] },
   { path: 'public-flashcards', component: PublicFlashcardsComponent },
   { path: 'signin', component: SigninComponent },
   { path: 'signup', component: SignupComponent },
