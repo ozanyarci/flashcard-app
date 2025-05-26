@@ -8,7 +8,7 @@
     <button mat-raised-button color="primary" (click)="goToFlashcards()">Go to Flashcards</button>
   </div>
 
-  <div *ngIf="currentFlashcard && !allAnswered" class="flashcard-test">
+  <div *ngIf="currentFlashcard && !allAnswered && !immediateFeedback" class="flashcard-test">
     <img [src]="currentFlashcard.photo" alt="Flashcard Image" class="flashcard-image">
 
     <div class="choices">
@@ -18,16 +18,14 @@
     </div>
   </div>
 
+  <div *ngIf="immediateFeedback && !allAnswered" class="feedback">
+    <p>{{ immediateFeedback }}</p>
+    <img *ngIf="isCorrect" src="correct.webp" alt="Feedback Image" width="100px" class="feedback-image">
+    <img *ngIf="!isCorrect"  src="incorrect.png" alt="Feedback Image" width="100px" class="feedback-image"><br/>
+    <button mat-raised-button color="primary" class="button-modern" (click)="nextQuestion()">Next Question</button>
+  </div>
+
   <div *ngIf="!currentFlashcard && !allAnswered" class="no-flashcards">
     <p>No flashcards available.</p>
   </div>
-
-  <button
-    mat-raised-button
-    color="primary"
-    (click)="nextQuestion()"
-    [disabled]="!currentFlashcard || allAnswered"
-    *ngIf="!allAnswered">
-    Next Question
-  </button>
 </div>

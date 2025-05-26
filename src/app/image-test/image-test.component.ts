@@ -26,6 +26,9 @@ export class ImageTestComponent implements OnInit {
   answeredFlashcards: Set<string> = new Set();
   allAnswered: boolean = false;
   correctAnswers: number = 0;
+  immediateFeedback: string | null = null;
+  answerSelected: boolean = false;
+  isCorrect: boolean = false;
 
   constructor(private flashcardService: FlashcardService, private router: Router) {}
 
@@ -41,6 +44,9 @@ export class ImageTestComponent implements OnInit {
   }
 
   nextQuestion() {
+    this.immediateFeedback = null; // Reset feedback message
+    this.answerSelected = false; // Reset the answer selected status
+
     const unAnsweredFlashcards = this.flashcards.filter(flashcard => !this.answeredFlashcards.has(flashcard.id || ''));
     if (unAnsweredFlashcards.length === 0) {
       this.allAnswered = true;
@@ -77,16 +83,19 @@ export class ImageTestComponent implements OnInit {
   }
 
   checkAnswer(choice: string) {
+    this.answerSelected = true; // Set the answer selected status
+
     if (this.currentFlashcard) {
       if (choice === this.currentFlashcard.word) {
-        alert('Correct!');
+        this.immediateFeedback = 'Correct!';
+        this.isCorrect = true;
         this.correctAnswers++;
       } else {
-        alert(`Incorrect! The correct answer is: ${this.currentFlashcard.word}`);
+        this.immediateFeedback = `Incorrect! The correct answer is: ${this.currentFlashcard.word}`;
+        this.isCorrect = false;
       }
 
       this.answeredFlashcards.add(this.currentFlashcard.id || '');
-      this.nextQuestion();
     }
   }
 
