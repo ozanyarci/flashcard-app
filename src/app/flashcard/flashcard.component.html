@@ -20,6 +20,13 @@
         <input matInput [(ngModel)]="newExample" name="example" />
       </mat-form-field>
 
+      <!-- Add this after the Example field -->
+      <mat-form-field class="example-full-width">
+        <mat-label>Synonyms (optional, comma separated)</mat-label>
+        <input matInput [(ngModel)]="newSynonyms" name="synonyms" />
+        <mat-hint>Separate multiple synonyms with commas</mat-hint>
+      </mat-form-field>
+
       <!-- Level Selection Field -->
       <mat-form-field class="example-full-width">
         <mat-label>Level</mat-label>
@@ -110,6 +117,12 @@
           <div class="flashcard-content-back">
             <h3>Meaning:</h3>
             <p>{{ flashcards[currentFlashcardIndex]?.meaning }}</p>
+
+            <!-- Add this section -->
+            <ng-container *ngIf="flashcards[currentFlashcardIndex]?.synonyms?.length">
+              <h3>Synonyms:</h3>
+              <p>{{ flashcards[currentFlashcardIndex]?.synonyms?.join(', ') }}</p>
+            </ng-container>
             <ng-container *ngIf="flashcards[currentFlashcardIndex]?.example">
               <h3>Example:</h3>
               <p>{{ flashcards[currentFlashcardIndex]?.example }}</p>

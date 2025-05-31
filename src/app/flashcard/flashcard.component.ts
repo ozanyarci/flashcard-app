@@ -49,6 +49,7 @@ export class FlashcardComponent implements OnInit {
   levels = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2', 'Other'];
   filterLevels = ['All', 'A1', 'A2', 'B1', 'B2', 'C1', 'C2', 'Other'];
   subjects = ['English', 'German', 'French', 'Other'];
+  newSynonyms: string = '';  // Add this line
 
   constructor(private flashcardService: FlashcardService, private localStorageService: LocalStorageService) {}
 
@@ -89,6 +90,9 @@ export class FlashcardComponent implements OnInit {
         level: this.newLevel,
         photo: this.newPhoto ? this.newPhoto.toString() : '',
         subject: this.newSubject,
+        synonyms: this.newSynonyms  // Add this line
+        ? this.newSynonyms.split(',').map(s => s.trim()).filter(s => s)
+        : [],
       };
 
       if (this.editMode && this.currentEditId) {
@@ -129,6 +133,7 @@ export class FlashcardComponent implements OnInit {
     this.editMode = true;
     this.currentEditId = flashcard.id || null;
     this.currentFlashcardIndex = index;
+    this.newSynonyms = flashcard.synonyms?.join(', ') || '';  // Add this line
   }
 
   deleteFlashcard(index: number) {
@@ -214,6 +219,7 @@ export class FlashcardComponent implements OnInit {
     this.editMode = false;
     this.currentEditId = null;
     this.currentIndex = null;
+    this.newSynonyms = '';  // Add this line
   }
 
   ngOnInit() {
