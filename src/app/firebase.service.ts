@@ -86,12 +86,29 @@ export class FirebaseService {
     );
   }
 
-  deleteFlashcard(flashcardId: string): Observable<void> {
-    if (!flashcardId) {
-      console.error('Flashcard ID is undefined');
-      return of(void 0);
-    }
-    console.log(`Attempting to delete flashcard with Firestore ID: ${flashcardId}`);
+  deletePersonalFlashcard(flashcardId: string): Observable<void> {
+    return this.authService.getUser().pipe(
+      switchMap((user) => {
+        if (user) {
+          const flashcardDoc = doc(this.firestore, `users/${user.uid}/flashcards/${flashcardId}`);
+          return from(deleteDoc(flashcardDoc)).pipe(
+            catchError((err) => {
+              console.error('Error deleting personal flashcard:', err);
+              throw err;
+            })
+          );
+        } else {
+          throw new Error('User not authenticated');
+        }
+      }),
+      catchError((err) => {
+        console.error('Error fetching user:', err);
+        throw err;
+      })
+    );
+  }
+
+  deletePublicFlashcard(flashcardId: string): Observable<void> {
     return this.authService.getUser().pipe(
       switchMap((user) => {
         if (user) {
@@ -190,7 +207,6 @@ export class FirebaseService {
           const data = doc.data() as Flashcard;
           const createdBy = data.createdBy;
           const flashcardWithId = { ...data, id: doc.id };
-
           if (createdBy) {
             return this.getCreator(createdBy).pipe(
               map(creator => ({ ...flashcardWithId, creator }))

@@ -136,10 +136,10 @@ export class FlashcardComponent implements OnInit {
     this.newSynonyms = flashcard.synonyms?.join(', ') || '';  // Add this line
   }
 
-  deleteFlashcard(index: number) {
+   deleteFlashcard(index: number) {
     const flashcardId = this.flashcards[index].id;
     if (flashcardId) {
-      this.flashcardService.deleteFlashcard(flashcardId).subscribe(() => {
+      this.flashcardService.deletePersonalFlashcard(flashcardId).subscribe(() => {
         alert('Flashcard deleted successfully.');
         this.loadFlashcards();
       }, error => {

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { FirebaseService } from './firebase.service';
 import { LocalStorageService } from './local-storage.service';
 import { Observable, of } from 'rxjs';
-import { catchError, switchMap } from 'rxjs/operators';
+import { catchError } from 'rxjs/operators';
 import { Flashcard } from './models/flashcard';
 import { DocumentReference, DocumentData } from '@angular/fire/firestore';
 
@@ -39,10 +39,19 @@ export class FlashcardService {
     );
   }
 
-  deleteFlashcard(id: string): Observable<void> {
-    return this.firebaseService.deleteFlashcard(id).pipe(
+  deletePersonalFlashcard(id: string): Observable<void> {
+    return this.firebaseService.deletePersonalFlashcard(id).pipe(
       catchError((err) => {
-        console.error('Error deleting flashcard:', err);
+        console.error('Error deleting personal flashcard:', err);
+        return of(void 0);
+      })
+    );
+  }
+
+  deletePublicFlashcard(flashcardId: string): Observable<void> {
+    return this.firebaseService.deletePublicFlashcard(flashcardId).pipe(
+      catchError((err) => {
+        console.error('Error deleting public flashcard:', err);
         return of(void 0);
       })
     );

@@ -33,7 +33,6 @@ export class PublicFlashcardsComponent implements OnInit {
     ).subscribe((flashcards) => {
       this.groupFlashcardsByCreator(flashcards);
     });
-
     console.log('PublicFlashcardsComponent initialized.');
   }
 
@@ -46,7 +45,6 @@ export class PublicFlashcardsComponent implements OnInit {
       decks[creator].push(flashcard);
       return decks;
     }, {});
-
     console.log('Flashcards have been grouped by creator:', this.publicFlashcardsByCreator);
   }
 
@@ -60,7 +58,7 @@ export class PublicFlashcardsComponent implements OnInit {
       console.log(`Deleting flashcards for creator ID: ${creatorId}`);
       const deleteObservables: Observable<void>[] = flashcardIds.map(flashcardId => {
         console.log(`Attempting to delete flashcard with ID: ${flashcardId}`);
-        return this.flashcardService.deleteFlashcard(flashcardId).pipe(
+        return this.flashcardService.deletePublicFlashcard(flashcardId).pipe(
           tap({
             next: () => {
               console.log(`Flashcard with ID ${flashcardId} deleted successfully.`);
@@ -70,7 +68,6 @@ export class PublicFlashcardsComponent implements OnInit {
           })
         );
       });
-
       forkJoin(deleteObservables).pipe(
         tap({
           next: () => {
