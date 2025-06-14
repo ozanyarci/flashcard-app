@@ -3,7 +3,11 @@ const dotenv = require('dotenv');
 const path = require('path');
 
 // Load environment variables from .env file
-dotenv.config({ path: path.join(__dirname, '../.env') });
+const envPath = path.join(__dirname, '../.env');
+dotenv.config({ path: envPath });
+
+// Debug log to verify environment variables are loaded correctly
+console.log('Environment Variables:', process.env);
 
 const environmentTemplate = (isProd) => `
 export const environment = {
@@ -22,10 +26,12 @@ export const environment = {
 
 // Ensure the directory exists
 const envDir = path.join(__dirname, '../src/environments');
-if (!fs.existsSync(envDir)){
-    fs.mkdirSync(envDir, { recursive: true });
+if (!fs.existsSync(envDir)) {
+  fs.mkdirSync(envDir, { recursive: true });
 }
 
 // Write the environment files
 fs.writeFileSync(path.join(envDir, 'environment.ts'), environmentTemplate(false));
 fs.writeFileSync(path.join(envDir, 'environment.prod.ts'), environmentTemplate(true));
+
+console.log('Environment files generated successfully.');
