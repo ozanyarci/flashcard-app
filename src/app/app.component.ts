@@ -32,10 +32,11 @@ import { Observable, switchMap } from 'rxjs';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit {
-  @ViewChild(MatMenuTrigger) menuTrigger!: MatMenuTrigger; // Use the non-null assertion operator
+  @ViewChild(MatMenuTrigger) menuTrigger!: MatMenuTrigger;
   title = 'flashcard-app';
-  isMobile = false;
+  isMobile: boolean = false;
   flashcardCount: number = 0;
+  favoriteFlashcardCount: number = 0;
   flashcards: Flashcard[] = [];
   displayName: string | null = null;
 
@@ -43,7 +44,7 @@ export class AppComponent implements OnInit {
     this.checkScreenWidth();
     this.flashcardService.getFlashcards().subscribe(flashcards => {
       this.flashcards = flashcards;
-      this.flashcardCount = flashcards.length;
+      this.favoriteFlashcardCount = flashcards.filter(fc => fc.favorite).length;
     });
     inject();
   }
@@ -79,6 +80,6 @@ export class AppComponent implements OnInit {
   }
 
   hasEnoughFlashcards(): boolean {
-    return this.flashcardCount >= 4;
+    return this.favoriteFlashcardCount >= 4;
   }
 }

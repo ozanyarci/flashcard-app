@@ -2,8 +2,8 @@
   <span>Flashcards App</span>
   <div class="toolbar-buttons" *ngIf="!isMobile">
     <button mat-button class="button-modern" routerLink="/flashcards" routerLinkActive="router-link-active">Flashcards</button>
-    <button mat-menu-item class="button-modern" routerLink="/public-flashcards" routerLinkActive="router-link-active">Public Flashcards</button>
-    <button *ngIf="hasEnoughFlashcards()" mat-button class="button-modern" routerLink="/test" routerLinkActive="router-link-active">Test</button>
+    <button mat-button class="button-modern" routerLink="/public-flashcards" routerLinkActive="router-link-active">Public Flashcards</button>
+    <button *ngIf="hasEnoughFlashcards()" mat-button class="button-modern" routerLink="/test" routerLinkActive="router-link-active">Favorites Test</button>
     <button *ngIf="hasEnoughFlashcards()" mat-button class="button-modern" routerLink="/meaning-test" routerLinkActive="router-link-active">Meaning Test</button>
     <button *ngIf="hasEnoughFlashcards()" mat-button class="button-modern" routerLink="/sentence-test" routerLinkActive="router-link-active">Sentence Test</button>
     <button *ngIf="hasEnoughFlashcards()" mat-button class="button-modern" routerLink="/image-test" routerLinkActive="router-link-active">Image Test</button>
@@ -16,7 +16,7 @@
   <mat-menu #mobileMenu="matMenu">
     <button mat-menu-item routerLink="/flashcards" routerLinkActive="router-link-active">Flashcards</button>
     <button mat-menu-item routerLink="/public-flashcards" routerLinkActive="router-link-active">Public Flashcards</button>
-    <button *ngIf="hasEnoughFlashcards()" mat-menu-item routerLink="/test" routerLinkActive="router-link-active">Test</button>
+    <button *ngIf="hasEnoughFlashcards()" mat-menu-item routerLink="/test" routerLinkActive="router-link-active">Favorites Test</button>
     <button *ngIf="hasEnoughFlashcards()" mat-menu-item routerLink="/meaning-test" routerLinkActive="router-link-active">Meaning Test</button>
     <button *ngIf="hasEnoughFlashcards()" mat-menu-item routerLink="/sentence-test" routerLinkActive="router-link-active">Sentence Test</button>
     <button *ngIf="hasEnoughFlashcards()" mat-menu-item routerLink="/image-test" routerLinkActive="router-link-active">Image Test</button>

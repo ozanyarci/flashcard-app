@@ -3,14 +3,14 @@ mat-toolbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #3f51b5; /* Toolbar background color */
-  color: white; /* Toolbar text color */
-  flex-wrap: wrap; /* Ensure toolbar content wraps on small screens */
+  background-color: #3f51b5;
+  color: white;
+  flex-wrap: wrap;
 }
 
 .toolbar-buttons {
   display: flex;
-  align-items: center; /* Vertically align items */
+  align-items: center;
 }
 
 .toolbar-buttons button {
@@ -18,7 +18,7 @@ mat-toolbar {
 }
 
 .button-modern {
-  background-color: #4caf50; /* Green background color */
+  background-color: #4caf50;
   border-radius: 20px;
   padding: 10px 20px;
   box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
@@ -26,7 +26,7 @@ mat-toolbar {
 }
 
 .button-modern:hover {
-  background-color: #388e3c; /* Darker green on hover */
+  background-color: #388e3c;
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
 }
 
@@ -52,18 +52,17 @@ mat-toolbar {
   }
 
   .welcome-message {
-    flex-basis: 100%; /* Ensure it takes up full width */
+    flex-basis: 100%;
     text-align: center;
     padding-top: 10px;
-    font-size: 12px; /* Optionally adjust the size for mobile view */
-    color: #000; /* Change the color for welcome message in mobile view */
+    font-size: 12px;
   }
 
   mat-menu .mat-menu-content {
-    color: #000; /* Ensure all text within the menu has a visible color */
+    color: #000;
   }
 
   mat-menu .mat-menu-item {
-    color: #000; /* Ensure menu items text is visible */
+    color: #000;
   }
 }
