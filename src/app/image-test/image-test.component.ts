@@ -38,7 +38,8 @@ export class ImageTestComponent implements OnInit {
 
   loadFlashcards() {
     this.flashcardService.getFlashcards().subscribe((flashcards) => {
-      this.flashcards = flashcards;
+      // Filter out flashcards without a photo
+      this.flashcards = flashcards.filter(flashcard => flashcard.photo);
       this.nextQuestion();
     });
   }
@@ -60,7 +61,6 @@ export class ImageTestComponent implements OnInit {
 
   generateChoices() {
     if (!this.currentFlashcard) return;
-
     const words = this.flashcards.map(flashcard => flashcard.word);
     const correctWord = this.currentFlashcard.word;
     this.choices = [correctWord];
@@ -84,7 +84,6 @@ export class ImageTestComponent implements OnInit {
 
   checkAnswer(choice: string) {
     this.answerSelected = true; // Set the answer selected status
-
     if (this.currentFlashcard) {
       if (choice === this.currentFlashcard.word) {
         this.immediateFeedback = 'Correct!';
@@ -94,7 +93,6 @@ export class ImageTestComponent implements OnInit {
         this.immediateFeedback = `Incorrect! The correct answer is: ${this.currentFlashcard.word}`;
         this.isCorrect = false;
       }
-
       this.answeredFlashcards.add(this.currentFlashcard.id || '');
     }
   }

@@ -9,7 +9,8 @@ export interface Flashcard {
   createdBy?: string | undefined;  // Add `createdBy` field to Flashcard
   creator?: Creator;  // Add `creator` field to Flashcard
   public?: boolean;   // Add `public` field to Flashcard
-  synonyms?: string[];  // Add this line
+  synonyms?: string[];  // Add this line,
+  favorite?: boolean; // Add this line
 }
 
 export interface Creator {

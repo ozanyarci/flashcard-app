@@ -10,7 +10,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { LocalStorageService } from '../local-storage.service'; // Import LocalStorageService
+import { LocalStorageService } from '../local-storage.service';
 
 @Component({
   selector: 'app-flashcard',
@@ -50,9 +50,10 @@ export class FlashcardComponent implements OnInit {
   filterLevels = ['All', 'A1', 'A2', 'B1', 'B2', 'C1', 'C2', 'Other'];
   subjects = ['English', 'German', 'French', 'Other'];
   newSynonyms: string = '';  // Add this line
+  newFavorite: boolean = false;  // Add this line
 
   constructor(private flashcardService: FlashcardService, private localStorageService: LocalStorageService) {}
-
+  
   triggerFileInput() {
     const fileInput = document.getElementById('fileInput') as HTMLInputElement;
     if (fileInput) {
@@ -90,11 +91,9 @@ export class FlashcardComponent implements OnInit {
         level: this.newLevel,
         photo: this.newPhoto ? this.newPhoto.toString() : '',
         subject: this.newSubject,
-        synonyms: this.newSynonyms  // Add this line
-        ? this.newSynonyms.split(',').map(s => s.trim()).filter(s => s)
-        : [],
+        synonyms: this.newSynonyms ? this.newSynonyms.split(',').map(s => s.trim()).filter(s => s) : [],
+        favorite: this.newFavorite // Add this line
       };
-
       if (this.editMode && this.currentEditId) {
         this.flashcardService.updateFlashcard(this.currentEditId, flashcard).subscribe(() => {
           this.editMode = false;
@@ -114,7 +113,6 @@ export class FlashcardComponent implements OnInit {
           alert('Error adding flashcard.');
         });
       }
-
       this.resetForm();
       this.isFlipped = false;
     } else {
@@ -130,13 +128,14 @@ export class FlashcardComponent implements OnInit {
     this.newLevel = flashcard.level || 'Other';
     this.newPhoto = flashcard.photo || null;
     this.newSubject = flashcard.subject || '';
+    this.newFavorite = flashcard.favorite || false;  // Add this line
     this.editMode = true;
     this.currentEditId = flashcard.id || null;
     this.currentFlashcardIndex = index;
     this.newSynonyms = flashcard.synonyms?.join(', ') || '';  // Add this line
   }
 
-   deleteFlashcard(index: number) {
+  deleteFlashcard(index: number) {
     const flashcardId = this.flashcards[index].id;
     if (flashcardId) {
       this.flashcardService.deletePersonalFlashcard(flashcardId).subscribe(() => {
@@ -216,10 +215,22 @@ export class FlashcardComponent implements OnInit {
     this.newLevel = 'Other';
     this.newPhoto = null;
     this.newSubject = '';
+    this.newFavorite = false;  // Add this line
     this.editMode = false;
     this.currentEditId = null;
     this.currentIndex = null;
     this.newSynonyms = '';  // Add this line
+  }
+
+  toggleFavorite(flashcard: Flashcard) {
+    flashcard.favorite = !flashcard.favorite;
+    if (flashcard.id) {
+      this.flashcardService.updateFlashcard(flashcard.id, flashcard).subscribe(() => {
+        console.log('Favorite status updated');
+      }, error => {
+        console.error('Error updating favorite status:', error);
+      });
+    }
   }
 
   ngOnInit() {

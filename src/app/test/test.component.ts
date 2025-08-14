@@ -14,12 +14,23 @@ import { Flashcard } from '../models/flashcard';
 @Component({
   selector: 'app-test',
   templateUrl: './test.component.html',
-  imports: [CommonModule,MatInputModule,MatButtonModule,MatCardModule,MatToolbarModule,FormsModule,MatIconModule,MatRadioModule,RouterLink],
-  standalone:true,
+  imports: [
+    CommonModule,
+    MatInputModule,
+    MatButtonModule,
+    MatCardModule,
+    MatToolbarModule,
+    FormsModule,
+    MatIconModule,
+    MatRadioModule,
+    RouterLink
+  ],
+  standalone: true,
   styleUrls: ['./test.component.css']
 })
 export class TestComponent implements OnInit {
   flashcards: Flashcard[] = [];
+  filteredFlashcards: Flashcard[] = []; // Add this line
   currentQuestionIndex: number = 0;
   options: string[] = [];
   correctAnswer: string = '';
@@ -29,34 +40,36 @@ export class TestComponent implements OnInit {
   noFlashcards: boolean = false;
   immediateFeedback: string | null = null;
 
-  constructor(private flashcardService: FlashcardService) { }
+  constructor(private flashcardService: FlashcardService) {}
 
   ngOnInit(): void {
     this.flashcardService.getFlashcards().subscribe(flashcards => {
       this.flashcards = flashcards;
-      if (this.flashcards.length > 0) {
+      // Filter flashcards to include only favorites
+      this.filteredFlashcards = this.flashcards.filter(flashcard => flashcard.favorite);
+      if (this.filteredFlashcards.length > 0) {
         this.loadQuestion();
       } else {
         this.noFlashcards = true;
       }
     });
-
   }
 
   loadQuestion(): void {
-    if (this.flashcards.length > 0 && this.currentQuestionIndex < this.flashcards.length) {
-      const currentFlashcard = this.flashcards[this.currentQuestionIndex];
+    if (this.filteredFlashcards.length > 0 && this.currentQuestionIndex < this.filteredFlashcards.length) {
+      const currentFlashcard = this.filteredFlashcards[this.currentQuestionIndex];
       this.correctAnswer = currentFlashcard.meaning;
       this.options = this.generateOptions(currentFlashcard.meaning);
-      this.immediateFeedback = null;  // Reset feedback for each new question
+      this.immediateFeedback = null; // Reset feedback for each new question
     }
   }
 
   generateOptions(correctAnswer: string): string[] {
     const options = [correctAnswer];
-    while (options.length < 4 && this.flashcards.length > 1) {
-      const randomIndex = Math.floor(Math.random() * this.flashcards.length);
-      const option = this.flashcards[randomIndex].meaning;
+    const meanings = this.filteredFlashcards.map(fc => fc.meaning);
+    while (options.length < 4) {
+      const randomIndex = Math.floor(Math.random() * meanings.length);
+      const option = meanings[randomIndex];
       if (!options.includes(option)) {
         options.push(option);
       }
@@ -65,16 +78,13 @@ export class TestComponent implements OnInit {
   }
 
   shuffle(array: any[]): any[] {
-    let currentIndex = array.length, randomIndex;
-
+    let currentIndex = array.length,
+      randomIndex;
     while (currentIndex !== 0) {
       randomIndex = Math.floor(Math.random() * currentIndex);
       currentIndex--;
-
-      [array[currentIndex], array[randomIndex]] = [
-        array[randomIndex], array[currentIndex]];
+      [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
     }
-
     return array;
   }
 
@@ -89,7 +99,7 @@ export class TestComponent implements OnInit {
   }
 
   nextQuestion(): void {
-    if (this.currentQuestionIndex < this.flashcards.length - 1) {
+    if (this.currentQuestionIndex < this.filteredFlashcards.length - 1) {
       this.currentQuestionIndex++;
       this.userAnswer = null;
       this.loadQuestion();
@@ -103,7 +113,7 @@ export class TestComponent implements OnInit {
     this.userAnswer = null;
     this.score = 0;
     this.showResult = false;
-    if (this.flashcards.length > 0) {
+    if (this.filteredFlashcards.length > 0) {
       this.loadQuestion();
     } else {
       this.noFlashcards = true;
