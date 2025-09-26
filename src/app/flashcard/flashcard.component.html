@@ -35,10 +35,10 @@
       <mat-form-field class="example-full-width">
         <mat-label>Subject</mat-label>
         <mat-select [(ngModel)]="newSubject" name="subject" required>
-          <mat-option *ngFor="let subject of subjects" [value]="subject">{{ subject }}</mat-option>
+          <mat-option *ngFor="let subject of subjects" [value]="subject.name">{{ subject.name }}</mat-option>
         </mat-select>
       </mat-form-field>
-      
+
       <!-- Photo Upload Field -->
       <div class="photo-field">
         <button mat-raised-button color="primary" type="button" (click)="triggerFileInput()">Upload Photo (Optional)</button>
@@ -56,9 +56,10 @@
       <mat-label>Filter by Subject</mat-label>
       <mat-select [(ngModel)]="filterSubject" name="filterSubject" (selectionChange)="applyFilter()">
         <mat-option value="All">All</mat-option>
-        <mat-option *ngFor="let subject of subjects" [value]="subject">{{ subject }}</mat-option>
+        <mat-option *ngFor="let subject of subjects" [value]="subject.name">{{ subject.name }}</mat-option>
       </mat-select>
     </mat-form-field>
+
     <!-- Filter by Level -->
     <mat-form-field class="example-full-width">
       <mat-label>Filter by Level</mat-label>
@@ -78,6 +79,7 @@
     </button>
     <button mat-raised-button color="warn" (click)="clearLocalStorage()">Clear Local Storage</button> <!-- Button to clear local storage -->
   </div>
+
   <!-- Flashcards Wrapper -->
   <div class="flashcard-wrapper">
     <!-- Display Flashcards -->

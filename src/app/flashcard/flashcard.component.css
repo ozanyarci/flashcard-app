@@ -132,6 +132,20 @@
   margin-bottom: 10px;
 }
 
+.delete-btn {
+  margin-left: 10px;
+  background: none;
+  border: none;
+  color: red;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.subject-list {
+  margin-top: 10px;
+}
+
+
 @media (max-width: 375px) {
   .flashcard {
     max-width: 100%;
@@ -175,4 +189,17 @@
 .flashcard-content-back p {
   margin-bottom: 10px;
 }
+.delete-btn {
+  margin-left: 10px;
+  background: none;
+  border: none;
+  color: red;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.subject-list {
+  margin-top: 10px;
+}
+
 }

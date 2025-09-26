@@ -5,6 +5,7 @@ import { Flashcard, Creator } from './models/flashcard';
 import { Observable, from, of } from 'rxjs';
 import { switchMap, map, catchError, concatMap, tap } from 'rxjs/operators';
 import { DocumentData, DocumentReference } from '@angular/fire/firestore';
+import { Subject } from './models/subject';
 
 @Injectable({
   providedIn: 'root',
@@ -35,15 +36,15 @@ export class FirebaseService {
     );
   }
 
-  addFlashcard(flashcard: Flashcard): Observable<DocumentReference<DocumentData>> {
+  addFlashcard(flashcard: Flashcard): Observable<Flashcard> {
     return this.authService.getUser().pipe(
       switchMap((user) => {
         if (user) {
           const flashcardsCollection = collection(this.firestore, `users/${user.uid}/flashcards`);
           return from(addDoc(flashcardsCollection, flashcard)).pipe(
-            map((docRef: DocumentReference) => {
+            map((docRef: DocumentReference<DocumentData>) => {
               console.log('Flashcard added successfully');
-              return docRef;
+              return { id: docRef.id, ...flashcard }; // ✅ return Flashcard with ID
             }),
             catchError((err) => {
               console.error('Error adding flashcard:', err);
@@ -60,6 +61,7 @@ export class FirebaseService {
       })
     );
   }
+
 
   updateFlashcard(id: string, flashcard: Flashcard): Observable<void> {
     return this.authService.getUser().pipe(
@@ -78,13 +80,10 @@ export class FirebaseService {
         } else {
           throw new Error('User not authenticated');
         }
-      }),
-      catchError((err) => {
-        console.error('Error fetching user:', err);
-        throw err;
       })
     );
   }
+
 
   deletePersonalFlashcard(flashcardId: string): Observable<void> {
     return this.authService.getUser().pipe(
@@ -223,4 +222,92 @@ export class FirebaseService {
       })
     );
   }
+
+  getSubjects(): Observable<Subject[]> {
+  const defaultSubjects: Subject[] = [
+    { name: 'English' },
+    { name: 'German' },
+    { name: 'French' },
+    { name: 'Other' }
+  ];
+
+  return this.authService.getUser().pipe(
+    switchMap(user => {
+      if (user) {
+        const subjectsCollection = collection(this.firestore, `users/${user.uid}/subjects`);
+        return from(getDocs(subjectsCollection)).pipe(
+          // convert docs to { id, name }
+          map(snapshot => snapshot.docs.map(doc => ({ id: doc.id, name: doc.data()['name'] as string } as Subject))),
+          // merge with defaults while avoiding duplicates by name
+          map(fetched => {
+            const merged: Subject[] = [...defaultSubjects];
+            fetched.forEach(fs => {
+              if (!merged.some(ds => ds.name === fs.name)) {
+                merged.push(fs);
+              }
+            });
+            return merged;
+          }),
+          // if anything goes wrong reading docs, return defaults
+          catchError(err => {
+            console.error('Error fetching subjects:', err);
+            return of(defaultSubjects);
+          })
+        );
+      } else {
+        // not authenticated — return defaults
+        return of(defaultSubjects);
+      }
+    }),
+    // catch any outer errors
+    catchError(err => {
+      console.error('Error in getSubjects():', err);
+      return of(defaultSubjects);
+    })
+  );
+}
+
+
+  addSubject(subject: string): Observable<void> {
+    return this.authService.getUser().pipe(
+      switchMap(user => {
+        if (user) {
+          const subjectsCollection = collection(this.firestore, `users/${user.uid}/subjects`);
+          return from(addDoc(subjectsCollection, { name: subject })).pipe(
+            map(() => {
+              console.log('Subject added successfully:', subject);
+            }),
+            catchError(err => {
+              console.error('Error adding subject:', err);
+              throw err;
+            })
+          );
+        } else {
+          throw new Error('User not authenticated');
+        }
+      })
+    );
+  }
+
+  deleteSubject(subjectId: string): Observable<void> {
+    return this.authService.getUser().pipe(
+      switchMap(user => {
+        if (user) {
+          const subjectRef = doc(this.firestore, `users/${user.uid}/subjects/${subjectId}`);
+          return from(deleteDoc(subjectRef)).pipe(
+            map(() => {
+              console.log('Subject deleted successfully:', subjectId);
+            }),
+            catchError(err => {
+              console.error('Error deleting subject:', err);
+              throw err;
+            })
+          );
+        } else {
+          throw new Error('User not authenticated');
+        }
+      })
+    );
+  }
+
 }

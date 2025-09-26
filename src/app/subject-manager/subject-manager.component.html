@@ -1,0 +1,19 @@
+<h3>Manage Subjects</h3>
+
+<!-- Add new subject -->
+<div class="add-subject">
+  <input
+    type="text"
+    [(ngModel)]="newSubject"
+    placeholder="New subject name"
+  />
+  <button (click)="addSubject()">➕ Add</button>
+</div>
+
+<!-- List of subjects -->
+<ul class="subject-list">
+  <li *ngFor="let subject of subjects">
+    {{ subject.name }}
+    <button (click)="deleteSubject(subject)">🗑️ Delete</button>
+  </li>
+</ul>

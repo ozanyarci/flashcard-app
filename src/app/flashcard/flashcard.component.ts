@@ -11,6 +11,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { LocalStorageService } from '../local-storage.service';
+import { Subject } from '../models/subject';
 
 @Component({
   selector: 'app-flashcard',
@@ -48,12 +49,19 @@ export class FlashcardComponent implements OnInit {
   flashcardCount: number = 0;
   levels = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2', 'Other'];
   filterLevels = ['All', 'A1', 'A2', 'B1', 'B2', 'C1', 'C2', 'Other'];
-  subjects = ['English', 'German', 'French', 'Other'];
+  subjects: Subject[] = [
+    { name: 'English' },
+    { name: 'German' },
+    { name: 'French' },
+    { name: 'Other' }
+  ];
   newSynonyms: string = '';  // Add this line
   newFavorite: boolean = false;  // Add this line
+  customFilterSubject: string = '';
+
 
   constructor(private flashcardService: FlashcardService, private localStorageService: LocalStorageService) {}
-  
+
   triggerFileInput() {
     const fileInput = document.getElementById('fileInput') as HTMLInputElement;
     if (fileInput) {
@@ -84,41 +92,58 @@ export class FlashcardComponent implements OnInit {
 
   addOrUpdateFlashcard() {
     if (this.newWord.trim() && this.newMeaning.trim() && this.newSubject.trim()) {
+      const subjectValue = this.newSubject;
+
       const flashcard: Flashcard = {
         word: this.newWord.trim(),
         meaning: this.newMeaning.trim(),
         example: this.newExample.trim(),
         level: this.newLevel,
         photo: this.newPhoto ? this.newPhoto.toString() : '',
-        subject: this.newSubject,
+        subject: subjectValue,
         synonyms: this.newSynonyms ? this.newSynonyms.split(',').map(s => s.trim()).filter(s => s) : [],
-        favorite: this.newFavorite // Add this line
+        favorite: this.newFavorite
       };
-      if (this.editMode && this.currentEditId) {
-        this.flashcardService.updateFlashcard(this.currentEditId, flashcard).subscribe(() => {
-          this.editMode = false;
-          this.currentEditId = null;
-          alert('Flashcard updated successfully.');
-          this.loadFlashcards();
-        }, error => {
-          console.error('Error updating flashcard:', error);
-          alert('Error updating flashcard.');
-        });
-      } else {
-        this.flashcardService.addFlashcard(flashcard).subscribe(() => {
+
+        if (this.editMode && this.currentEditId) {
+          this.flashcardService.updateFlashcard(this.currentEditId, flashcard).subscribe(() => {
+            alert('Flashcard updated successfully.');
+
+            // ✅ Reload all flashcards from Firestore (ensures subject filter works)
+            this.loadFlashcards();
+            // ✅ Reset subject filter so updated card is visible
+            this.filterSubject = 'All';
+            this.filterLevel = 'All';
+            this.applyFilter();
+            this.editMode = false;
+            this.currentEditId = null;
+          }, error => {
+            console.error('Error updating flashcard:', error);
+            alert('Error updating flashcard.');
+          });
+        }
+
+      else {
+        // 🔹 ADD
+        this.flashcardService.addFlashcard(flashcard).subscribe(docRef => {
           alert('Flashcard added successfully.');
-          this.loadFlashcards();
-        }, error => {
-          console.error('Error adding flashcard:', error);
-          alert('Error adding flashcard.');
+
+          // ✅ Append new card at the END of the array
+          const createdCard: Flashcard = { ...flashcard, id: docRef.id };
+          this.allFlashcards.push(createdCard);
+
+          this.applyFilter(); // ✅ filter immediately includes it
         });
       }
+
       this.resetForm();
       this.isFlipped = false;
     } else {
       alert('All fields are required.');
     }
   }
+
+
 
   editFlashcard(index: number) {
     const flashcard = this.flashcards[index];
@@ -154,21 +179,35 @@ export class FlashcardComponent implements OnInit {
 
   loadFlashcards() {
     this.flashcardService.getFlashcards().subscribe((flashcards) => {
-      this.flashcards = flashcards;
+      this.allFlashcards = flashcards; // keep the original full list
+      this.flashcards = flashcards;    // working copy for filtering
       this.flashcardCount = flashcards.length;
     });
   }
 
+
   applyFilter() {
-    this.flashcards = this.allFlashcards.filter(
-      (flashcard) =>
-        (this.filterSubject === 'All' || flashcard.subject === this.filterSubject) &&
-        (this.filterLevel === 'All' || flashcard.level === this.filterLevel)
-    );
+    if (this.filterSubject === 'All' && this.filterLevel === 'All') {
+      // Reset to all flashcards
+      this.flashcards = [...this.allFlashcards];
+    } else {
+      this.flashcards = this.allFlashcards.filter(
+        (flashcard) =>
+          (this.filterSubject === 'All' ||
+            (this.filterSubject === 'Other'
+              ? flashcard.subject === this.customFilterSubject.trim()
+              : flashcard.subject === this.filterSubject)) &&
+          (this.filterLevel === 'All' || flashcard.level === this.filterLevel)
+      );
+    }
+
     if (this.currentFlashcardIndex >= this.flashcards.length) {
       this.currentFlashcardIndex = this.flashcards.length ? this.flashcards.length - 1 : 0;
     }
   }
+
+
+
 
   clearLocalStorage() {
     this.localStorageService.clearAllFlashcards();
@@ -235,9 +274,31 @@ export class FlashcardComponent implements OnInit {
 
   ngOnInit() {
     this.loadFlashcards();
+    this.loadSubjects();
   }
+
+  loadSubjects() {
+    this.flashcardService.getSubjects().subscribe((subjects) => {
+      const defaults : Subject[] = [
+        { name: 'English' },
+        { name: 'German' },
+        { name: 'French' },
+        { name: 'Other' }
+      ];
+      if (subjects.length) {
+        // merge defaults + Firestore
+        this.subjects = Array.from(new Set([...subjects]));
+      } else {
+        this.subjects = defaults;
+      }
+    });
+  }
+
 
   hasEnoughFlashcards(): boolean {
     return this.flashcardCount >= 4;
   }
+
 }
+
+

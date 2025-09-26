@@ -12,6 +12,7 @@ import { SignoutComponent } from './signout/signout.component';
 import { PublicFlashcardsComponent } from './public-flashcards/public-flashcards.component';
 import { ImageTestComponent } from './image-test/image-test.component';
 import { RandomTestComponent } from './random-test/random-test.component';
+import { SubjectManagerComponent } from './subject-manager/subject-manager.component';
 
 export const routes: Routes = [
   { path: 'flashcards', component: FlashcardComponent, canActivate: [AuthGuard] },
@@ -20,6 +21,7 @@ export const routes: Routes = [
   { path: 'sentence-test', component: SentenceTestComponent, canActivate: [AuthGuard] },
   { path: 'image-test', component: ImageTestComponent, canActivate: [AuthGuard] },
   { path: 'random-test', component: RandomTestComponent, canActivate: [AuthGuard] },
+  { path: 'subject-manager', component: SubjectManagerComponent, canActivate: [AuthGuard]},
   { path: 'public-flashcards', component: PublicFlashcardsComponent },
   { path: 'signin', component: SigninComponent },
   { path: 'signup', component: SignupComponent },

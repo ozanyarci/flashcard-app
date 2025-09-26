@@ -2,9 +2,10 @@ import { Injectable } from '@angular/core';
 import { FirebaseService } from './firebase.service';
 import { LocalStorageService } from './local-storage.service';
 import { Observable, of } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { catchError, map } from 'rxjs/operators';
 import { Flashcard } from './models/flashcard';
 import { DocumentReference, DocumentData } from '@angular/fire/firestore';
+import { Subject } from './models/subject';
 
 @Injectable({
   providedIn: 'root'
@@ -21,14 +22,15 @@ export class FlashcardService {
     );
   }
 
-  addFlashcard(flashcard: Flashcard): Observable<DocumentReference<DocumentData>> {
+  addFlashcard(flashcard: Flashcard): Observable<Flashcard> {
     return this.firebaseService.addFlashcard(flashcard).pipe(
       catchError((err) => {
         console.error('Error adding flashcard:', err);
-        return of(); // Return empty observable
+        return of(); // fallback
       })
     );
   }
+
 
   updateFlashcard(id: string, flashcard: Flashcard): Observable<void> {
     return this.firebaseService.updateFlashcard(id, flashcard).pipe(
@@ -74,4 +76,48 @@ export class FlashcardService {
       })
     );
   }
+
+  getSubjects(): Observable<Subject[]> {
+  const defaultSubjects: Subject[] = [
+    { name: 'English' },
+    { name: 'German' },
+    { name: 'French' },
+    { name: 'Other' }
+  ];
+
+  return this.firebaseService.getSubjects().pipe(
+    map(fetchedSubjects => {
+      // 🔹 fetchedSubjects already has { id, name }
+      // 🔹 merge with defaults, avoiding duplicates
+      const allSubjects = [...defaultSubjects];
+
+      fetchedSubjects.forEach(fs => {
+        if (!allSubjects.some(ds => ds.name === fs.name)) {
+          allSubjects.push(fs);
+        }
+      });
+
+      return allSubjects;
+    }),
+    catchError(err => {
+      console.error('Error fetching subjects from Firebase:', err);
+      return of(defaultSubjects); // fallback to defaults
+    })
+  );
+}
+
+  addSubject(subject: string): Observable<void> {
+    return this.firebaseService.addSubject(subject).pipe(
+      catchError((err) => {
+        console.error('Error adding subject to Firebase:', err);
+        return of(void 0);
+      })
+    );
+  }
+
+  deleteSubject(subjectId: string): Observable<void> {
+    return this.firebaseService.deleteSubject(subjectId);
+  }
+
+
 }
