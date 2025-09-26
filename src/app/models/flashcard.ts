@@ -11,6 +11,8 @@ export interface Flashcard {
   public?: boolean;   // Add `public` field to Flashcard
   synonyms?: string[];  // Add this line,
   favorite?: boolean; // Add this line
+  insertionDate: number; // ✅ timestamp
+  updateDate: number;    // ✅ timestamp
 }
 
 export interface Creator {

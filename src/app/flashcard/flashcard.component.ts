@@ -93,6 +93,10 @@ export class FlashcardComponent implements OnInit {
   addOrUpdateFlashcard() {
     if (this.newWord.trim() && this.newMeaning.trim() && this.newSubject.trim()) {
       const subjectValue = this.newSubject;
+      const now = Date.now();
+
+      // 🔎 Find existing card if editing
+      const existingCard = this.allFlashcards.find(fc => fc.id === this.currentEditId);
 
       const flashcard: Flashcard = {
         word: this.newWord.trim(),
@@ -101,38 +105,51 @@ export class FlashcardComponent implements OnInit {
         level: this.newLevel,
         photo: this.newPhoto ? this.newPhoto.toString() : '',
         subject: subjectValue,
-        synonyms: this.newSynonyms ? this.newSynonyms.split(',').map(s => s.trim()).filter(s => s) : [],
-        favorite: this.newFavorite
+        synonyms: this.newSynonyms
+          ? this.newSynonyms.split(',').map(s => s.trim()).filter(s => s)
+          : [],
+        favorite: this.newFavorite,
+        insertionDate: this.editMode && existingCard
+          ? existingCard.insertionDate // ✅ keep original date
+          : now, // ✅ set on creation
+        updateDate: now // ✅ always updated
       };
 
-        if (this.editMode && this.currentEditId) {
-          this.flashcardService.updateFlashcard(this.currentEditId, flashcard).subscribe(() => {
-            alert('Flashcard updated successfully.');
+      if (this.editMode && this.currentEditId) {
+        // 🔹 UPDATE
+        this.flashcardService.updateFlashcard(this.currentEditId, flashcard).subscribe(() => {
+          alert('Flashcard updated successfully.');
 
-            // ✅ Reload all flashcards from Firestore (ensures subject filter works)
-            this.loadFlashcards();
-            // ✅ Reset subject filter so updated card is visible
-            this.filterSubject = 'All';
-            this.filterLevel = 'All';
-            this.applyFilter();
-            this.editMode = false;
-            this.currentEditId = null;
-          }, error => {
-            console.error('Error updating flashcard:', error);
-            alert('Error updating flashcard.');
-          });
-        }
+          // Replace updated card locally
+          this.allFlashcards = this.allFlashcards.map(fc =>
+            fc.id === this.currentEditId ? { ...flashcard, id: this.currentEditId } : fc
+          );
 
-      else {
+          // Keep sorting by insertionDate
+          this.allFlashcards.sort((a, b) => a.insertionDate - b.insertionDate);
+
+          this.applyFilter();
+
+          this.editMode = false;
+          this.currentEditId = null;
+        }, error => {
+          console.error('Error updating flashcard:', error);
+          alert('Error updating flashcard.');
+        });
+
+      } else {
         // 🔹 ADD
         this.flashcardService.addFlashcard(flashcard).subscribe(docRef => {
           alert('Flashcard added successfully.');
 
-          // ✅ Append new card at the END of the array
+          // Add to local list
           const createdCard: Flashcard = { ...flashcard, id: docRef.id };
           this.allFlashcards.push(createdCard);
 
-          this.applyFilter(); // ✅ filter immediately includes it
+          // Keep sorting by insertionDate
+          this.allFlashcards.sort((a, b) => a.insertionDate - b.insertionDate);
+
+          this.applyFilter();
         });
       }
 
@@ -142,7 +159,6 @@ export class FlashcardComponent implements OnInit {
       alert('All fields are required.');
     }
   }
-
 
 
   editFlashcard(index: number) {
@@ -177,13 +193,90 @@ export class FlashcardComponent implements OnInit {
     this.isFlipped = false;
   }
 
-  loadFlashcards() {
-    this.flashcardService.getFlashcards().subscribe((flashcards) => {
-      this.allFlashcards = flashcards; // keep the original full list
-      this.flashcards = flashcards;    // working copy for filtering
-      this.flashcardCount = flashcards.length;
+loadFlashcards() {
+  this.flashcardService.getFlashcards().subscribe(cards => {
+    // Normalize dates to numbers (ms since epoch)
+    const normalized = cards.map(card => {
+      return {
+        ...card,
+        insertionDate: this.normalizeDate(card.insertionDate),
+        updateDate: this.normalizeDate(card.updateDate)
+      } as Flashcard;
     });
+
+    // OPTIONAL: assign reasonable insertionDate for older docs that lack it
+    // (uncomment the update call below if you want automatic migration)
+    normalized.forEach(card => {
+      if (!card.insertionDate || card.insertionDate === 0) {
+        // prefer updateDate if present, otherwise use now
+        const newInsertion = card.updateDate && card.updateDate > 0 ? card.updateDate : Date.now();
+        card.insertionDate = newInsertion;
+
+        //If you want to persist the migration to Firestore, uncomment:
+        if (card.id) {
+          const patched = { ...card, insertionDate: newInsertion };
+          this.flashcardService.updateFlashcard(card.id, patched).subscribe({
+            next: () => console.log(`Patched insertionDate for ${card.id}`),
+            error: err => console.error('Error patching insertionDate:', err)
+          });
+        }
+      }
+    });
+
+    // Sort ascending -> oldest (smallest timestamp) first, newest last
+    this.allFlashcards = normalized.sort((a, b) => a.insertionDate - b.insertionDate);
+
+    // update derived state and UI
+    this.flashcardCount = this.allFlashcards.length;
+    this.applyFilter();
+  }, err => {
+    console.error('Error loading flashcards:', err);
+  });
+}
+
+  /**
+   * Convert many possible date representations into a number (ms since epoch).
+   * Handles:
+   *  - number (ms) -> returns as is
+   *  - numeric string -> parseInt
+   *  - ISO date string -> Date.parse
+   *  - Firestore Timestamp-like object { seconds, nanoseconds } -> ms
+   *  - object with toDate() -> use toDate().getTime()
+   * fallback -> 0
+   */
+  private normalizeDate(value: any): number {
+    if (value == null) return 0;
+
+    if (typeof value === 'number' && !isNaN(value)) return value;
+
+    if (typeof value === 'string') {
+      const asNum = Number(value);
+      if (!isNaN(asNum)) return asNum;
+      const parsed = Date.parse(value);
+      if (!isNaN(parsed)) return parsed;
+      return 0;
+    }
+
+    // Handle Firestore Timestamp-like object
+    try {
+      // Firestore Timestamp (client & server) often has 'seconds' and 'nanoseconds'
+      if (typeof value.seconds === 'number') {
+        const ms = (value.seconds * 1000) + Math.floor((value.nanoseconds || 0) / 1e6);
+        return ms;
+      }
+      // Some SDK objects implement toDate()
+      if (typeof value.toDate === 'function') {
+        const d = value.toDate();
+        if (d instanceof Date && !isNaN(d.getTime())) return d.getTime();
+      }
+    } catch (e) {
+      // ignore and fallback
+    }
+
+    return 0;
   }
+
+
 
 
   applyFilter() {
