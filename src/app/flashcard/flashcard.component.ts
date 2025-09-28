@@ -91,74 +91,68 @@ export class FlashcardComponent implements OnInit {
   }
 
   addOrUpdateFlashcard() {
-    if (this.newWord.trim() && this.newMeaning.trim() && this.newSubject.trim()) {
-      const subjectValue = this.newSubject;
-      const now = Date.now();
+  if (this.newWord.trim() && this.newMeaning.trim() && this.newSubject.trim()) {
+    const subjectValue = this.newSubject;
+    const now = Date.now();
 
-      // 🔎 Find existing card if editing
-      const existingCard = this.allFlashcards.find(fc => fc.id === this.currentEditId);
+    // 🔎 Find existing card if editing
+    const existingCard = this.allFlashcards.find(fc => fc.id === this.currentEditId);
 
-      const flashcard: Flashcard = {
-        word: this.newWord.trim(),
-        meaning: this.newMeaning.trim(),
-        example: this.newExample.trim(),
-        level: this.newLevel,
-        photo: this.newPhoto ? this.newPhoto.toString() : '',
-        subject: subjectValue,
-        synonyms: this.newSynonyms
-          ? this.newSynonyms.split(',').map(s => s.trim()).filter(s => s)
-          : [],
-        favorite: this.newFavorite,
-        insertionDate: this.editMode && existingCard
-          ? existingCard.insertionDate // ✅ keep original date
-          : now, // ✅ set on creation
-        updateDate: now // ✅ always updated
-      };
+    const flashcard: Flashcard = {
+      word: this.newWord.trim(),
+      meaning: this.newMeaning.trim(),
+      example: this.newExample.trim(),
+      level: this.newLevel,
+      photo: this.newPhoto ? this.newPhoto.toString() : '',
+      subject: subjectValue,
+      synonyms: this.newSynonyms
+        ? this.newSynonyms.split(',').map(s => s.trim()).filter(s => s)
+        : [],
+      favorite: this.newFavorite,
+      insertionDate: this.editMode && existingCard
+        ? existingCard.insertionDate // ✅ keep original date
+        : now, // ✅ set on creation
+      updateDate: now // ✅ always updated
+    };
 
-      if (this.editMode && this.currentEditId) {
-        // 🔹 UPDATE
-        this.flashcardService.updateFlashcard(this.currentEditId, flashcard).subscribe(() => {
-          alert('Flashcard updated successfully.');
+    if (this.editMode && this.currentEditId) {
+      // 🔹 UPDATE
+      this.flashcardService.updateFlashcard(this.currentEditId, flashcard).subscribe(() => {
+        alert('Flashcard updated successfully.');
 
-          // Replace updated card locally
-          this.allFlashcards = this.allFlashcards.map(fc =>
-            fc.id === this.currentEditId ? { ...flashcard, id: this.currentEditId } : fc
-          );
+        // ✅ Reload from Firestore to ensure subjects & filters stay correct
+        this.loadFlashcards();
 
-          // Keep sorting by insertionDate
-          this.allFlashcards.sort((a, b) => a.insertionDate - b.insertionDate);
+        this.editMode = false;
+        this.currentEditId = null;
+      }, error => {
+        console.error('Error updating flashcard:', error);
+        alert('Error updating flashcard.');
+      });
 
-          this.applyFilter();
-
-          this.editMode = false;
-          this.currentEditId = null;
-        }, error => {
-          console.error('Error updating flashcard:', error);
-          alert('Error updating flashcard.');
-        });
-
-      } else {
-        // 🔹 ADD
-        this.flashcardService.addFlashcard(flashcard).subscribe(docRef => {
-          alert('Flashcard added successfully.');
-
-          // Add to local list
-          const createdCard: Flashcard = { ...flashcard, id: docRef.id };
-          this.allFlashcards.push(createdCard);
-
-          // Keep sorting by insertionDate
-          this.allFlashcards.sort((a, b) => a.insertionDate - b.insertionDate);
-
-          this.applyFilter();
-        });
-      }
-
-      this.resetForm();
-      this.isFlipped = false;
     } else {
-      alert('All fields are required.');
+      // 🔹 ADD
+      this.flashcardService.addFlashcard(flashcard).subscribe(docRef => {
+        alert('Flashcard added successfully.');
+
+        // Add to local list
+        const createdCard: Flashcard = { ...flashcard, id: docRef.id };
+        this.allFlashcards.push(createdCard);
+
+        // Keep sorting by insertionDate
+        this.allFlashcards.sort((a, b) => a.insertionDate - b.insertionDate);
+
+        this.applyFilter();
+      });
     }
+
+    this.resetForm();
+    this.isFlipped = false;
+  } else {
+    alert('All fields are required.');
   }
+}
+
 
 
   editFlashcard(index: number) {
