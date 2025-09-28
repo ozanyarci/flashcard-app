@@ -1,0 +1,45 @@
+.print-btn:hover {
+  background: #45a049;
+}
+
+.wrapper {
+    text-align: center;
+}
+
+.dictionary-container {
+  font-family: "Times New Roman", serif;
+  line-height: 1.5;
+  padding: 20px;
+}
+
+.letter-section {
+  margin-bottom: 30px;
+}
+
+.letter {
+  font-size: 22px;
+  font-weight: bold;
+  border-bottom: 1px solid #333;
+  margin-bottom: 10px;
+}
+
+.word {
+  font-size: 18px;
+  margin: 0 0 5px;
+}
+
+.print-btn {
+  background: #1976d2;
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.flashcard-entry {
+  page-break-inside: avoid;
+  break-inside: avoid;
+}
+
+

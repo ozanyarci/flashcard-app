@@ -5,6 +5,7 @@
       <button mat-button class="button-modern" routerLink="/flashcards" routerLinkActive="router-link-active">Flashcards</button>
       <button mat-button class="button-modern" routerLink="/public-flashcards" routerLinkActive="router-link-active">Public Flashcards</button>
       <button mat-button class="button-modern" routerLink="/subject-manager" routerLinkActive="router-link-active">Subject Manager</button>
+      <button mat-button class="button-modern" routerLink="/dictionary" routerLinkActive="router-link-active">Dictionary</button>
       <button mat-button class="button-modern" routerLink="/signout">Sign Out</button>
       <div class="welcome-message" *ngIf="displayName">Welcome, {{ displayName }}</div>
     </div>
@@ -15,6 +16,7 @@
       <button mat-menu-item routerLink="/flashcards" routerLinkActive="router-link-active">Flashcards</button>
       <button mat-menu-item routerLink="/public-flashcards" routerLinkActive="router-link-active">Public Flashcards</button>
       <button mat-menu-item routerLink="/subject-manager" routerLinkActive="router-link-active">Subject Manager</button>
+      <button mat-menu-item routerLink="/dictionary" routerLinkActive="router-link-active">Dictionary</button>
       <button *ngIf="hasEnoughFlashcards()" mat-menu-item routerLink="/test" routerLinkActive="router-link-active">Favorites Test</button>
       <button *ngIf="hasEnoughFlashcards()" mat-menu-item routerLink="/meaning-test" routerLinkActive="router-link-active">Meaning Test</button>
       <button *ngIf="hasEnoughFlashcards()" mat-menu-item routerLink="/sentence-test" routerLinkActive="router-link-active">Sentence Test</button>

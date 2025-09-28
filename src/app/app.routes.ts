@@ -13,6 +13,7 @@ import { PublicFlashcardsComponent } from './public-flashcards/public-flashcards
 import { ImageTestComponent } from './image-test/image-test.component';
 import { RandomTestComponent } from './random-test/random-test.component';
 import { SubjectManagerComponent } from './subject-manager/subject-manager.component';
+import { DictionaryViewComponent } from './dictionary-view/dictionary-view.component';
 
 export const routes: Routes = [
   { path: 'flashcards', component: FlashcardComponent, canActivate: [AuthGuard] },
@@ -22,6 +23,7 @@ export const routes: Routes = [
   { path: 'image-test', component: ImageTestComponent, canActivate: [AuthGuard] },
   { path: 'random-test', component: RandomTestComponent, canActivate: [AuthGuard] },
   { path: 'subject-manager', component: SubjectManagerComponent, canActivate: [AuthGuard]},
+  { path: 'dictionary', component: DictionaryViewComponent, canActivate: [AuthGuard] },
   { path: 'public-flashcards', component: PublicFlashcardsComponent },
   { path: 'signin', component: SigninComponent },
   { path: 'signup', component: SignupComponent },
