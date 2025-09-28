@@ -8,11 +8,13 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
-
+import { MatDividerModule } from '@angular/material/divider';
+import { MatIconModule } from '@angular/material/icon';
+import {MatListModule} from '@angular/material/list'; 
 @Component({
   selector: 'app-subject-manager',
   templateUrl: './subject-manager.component.html',
-  imports: [FormsModule, RouterLink, CommonModule, MatInputModule, MatButtonModule, MatCardModule, MatFormFieldModule],
+  imports: [FormsModule, CommonModule, MatInputModule, MatButtonModule, MatCardModule, MatFormFieldModule, MatDividerModule,MatIconModule, MatListModule],
   standalone: true,
   styleUrls: ['./subject-manager.component.css']
 })

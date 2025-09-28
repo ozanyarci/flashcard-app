@@ -1,19 +1,32 @@
-<h3>Manage Subjects</h3>
+<div class="subject-manager-container">
+  <mat-card class="subject-manager-card">
+    <mat-card-header>
+      <mat-card-title>📚 Subject Manager</mat-card-title>
+    </mat-card-header>
 
-<!-- Add new subject -->
-<div class="add-subject">
-  <input
-    type="text"
-    [(ngModel)]="newSubject"
-    placeholder="New subject name"
-  />
-  <button (click)="addSubject()">➕ Add</button>
+    <mat-card-content>
+      <!-- Add new subject -->
+      <form (ngSubmit)="addSubject()" class="subject-form">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>New Subject</mat-label>
+          <input matInput [(ngModel)]="newSubject" name="newSubject" required>
+        </mat-form-field>
+        <button mat-raised-button color="primary" type="submit">Add</button>
+      </form>
+
+      <mat-divider class="divider"></mat-divider>
+
+      <!-- Subject list -->
+      <h3 class="section-title">Your Subjects</h3>
+      <mat-list>
+        <mat-list-item *ngFor="let subject of subjects">
+          <span class="subject-name">{{ subject.name }}</span>
+          <span class="spacer"></span>
+          <button mat-icon-button color="warn" (click)="deleteSubject(subject)">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </mat-list-item>
+      </mat-list>
+    </mat-card-content>
+  </mat-card>
 </div>
-
-<!-- List of subjects -->
-<ul class="subject-list">
-  <li *ngFor="let subject of subjects">
-    {{ subject.name }}
-    <button (click)="deleteSubject(subject)">🗑️ Delete</button>
-  </li>
-</ul>
