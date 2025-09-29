@@ -20,11 +20,14 @@
       <h3 class="section-title">Your Subjects</h3>
       <mat-list>
         <mat-list-item *ngFor="let subject of subjects">
+
           <span class="subject-name">{{ subject.name }}</span>
           <span class="spacer"></span>
-          <button mat-icon-button color="warn" (click)="deleteSubject(subject)">
-            <mat-icon>delete</mat-icon>
-          </button>
+          <span *ngIf="subject.name != 'Other'">
+            <button mat-icon-button color="warn" (click)="deleteSubject(subject.name)">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </span>
         </mat-list-item>
       </mat-list>
     </mat-card-content>

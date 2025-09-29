@@ -281,17 +281,18 @@ loadFlashcards() {
       this.flashcards = this.allFlashcards.filter(
         (flashcard) =>
           (this.filterSubject === 'All' ||
-            (this.filterSubject === 'Other'
-              ? flashcard.subject === this.customFilterSubject.trim()
-              : flashcard.subject === this.filterSubject)) &&
+            flashcard.subject === this.filterSubject) &&
           (this.filterLevel === 'All' || flashcard.level === this.filterLevel)
       );
     }
 
     if (this.currentFlashcardIndex >= this.flashcards.length) {
-      this.currentFlashcardIndex = this.flashcards.length ? this.flashcards.length - 1 : 0;
+      this.currentFlashcardIndex = this.flashcards.length
+        ? this.flashcards.length - 1
+        : 0;
     }
   }
+
 
 
 

@@ -10,7 +10,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
-import {MatListModule} from '@angular/material/list'; 
+import {MatListModule} from '@angular/material/list';
 @Component({
   selector: 'app-subject-manager',
   templateUrl: './subject-manager.component.html',
@@ -43,13 +43,35 @@ export class SubjectManagerComponent implements OnInit {
     });
   }
 
-  deleteSubject(subject: Subject) {
-    if (!confirm(`Delete subject "${subject.name}"? Flashcards will be moved to "Other".`)) return;
+  deleteSubject(subjectName: string) {
+    if (!confirm(`Delete subject "${subjectName}"? Flashcards will be moved to "Other".`)) return;
 
-    if (subject.id) {
-      this.flashcardService.deleteSubject(subject.id).subscribe(() => {
-        this.subjects = this.subjects.filter(s => s.id !== subject.id);
+    // 1️⃣ Get all flashcards first
+    this.flashcardService.getFlashcards().subscribe(flashcards => {
+      const affectedFlashcards = flashcards.filter(fc => fc.subject === subjectName);
+
+      // 2️⃣ Update each affected flashcard to "Other"
+      affectedFlashcards.forEach(fc => {
+        if (fc.id) {
+          const updatedFlashcard = { ...fc, subject: 'Other' };
+          this.flashcardService.updateFlashcard(fc.id, updatedFlashcard).subscribe();
+        }
       });
-    }
+
+      // 3️⃣ Delete the subject from Firestore
+      this.flashcardService.getSubjects().subscribe(subjects => {
+        const target = subjects.find(s => s.name === subjectName);
+        if (target?.id) {
+          this.flashcardService.deleteSubject(target.id).subscribe(() => {
+            // 4️⃣ Refresh subject list locally
+            this.subjects = this.subjects.filter(s => s.name !== subjectName);
+            console.log(`Subject "${subjectName}" deleted and flashcards moved to "Other"`);
+          });
+        }
+      });
+    });
   }
+
+
+
 }
