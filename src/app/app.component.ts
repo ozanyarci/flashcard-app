@@ -9,7 +9,6 @@ import { CommonModule } from '@angular/common';
 import { SentenceTestComponent } from './sentence-test/sentence-test.component';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu';
-import { inject } from "@vercel/analytics";
 import { Flashcard } from './models/flashcard';
 import { Observable, switchMap } from 'rxjs';
 
@@ -46,7 +45,6 @@ export class AppComponent implements OnInit {
       this.flashcards = flashcards;
       this.favoriteFlashcardCount = flashcards.filter(fc => fc.favorite).length;
     });
-    inject();
   }
 
   ngOnInit() {

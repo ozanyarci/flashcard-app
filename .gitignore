@@ -45,3 +45,6 @@ src/app/environments/environment.prod.ts
 .env
 src/environments/environment.prod.ts
 src/environments/environment.ts
+.firebase/hosting.YnVpbGQ.cache
+.firebase/hosting.ZGlzdFxmbGFzaGNhcmQtYXBw.cache
+.firebase/hosting.ZGlzdFxmbGFzaGNhcmQtYXBwXGJyb3dzZXI.cache
