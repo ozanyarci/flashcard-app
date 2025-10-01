@@ -12,6 +12,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { LocalStorageService } from '../local-storage.service';
 import { Subject } from '../models/subject';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-flashcard',
@@ -55,12 +56,15 @@ export class FlashcardComponent implements OnInit {
     { name: 'French' },
     { name: 'Other' }
   ];
-  newSynonyms: string = '';  // Add this line
-  newFavorite: boolean = false;  // Add this line
+  newSynonyms: string = '';
+  newFavorite: boolean = false;
   customFilterSubject: string = '';
 
-
-  constructor(private flashcardService: FlashcardService, private localStorageService: LocalStorageService) {}
+  constructor(
+    private flashcardService: FlashcardService,
+    private localStorageService: LocalStorageService,
+    private toastr: ToastrService
+  ) {}
 
   triggerFileInput() {
     const fileInput = document.getElementById('fileInput') as HTMLInputElement;
@@ -74,12 +78,12 @@ export class FlashcardComponent implements OnInit {
     const file = input.files?.[0];
     if (file) {
       if (!file.type.startsWith('image/')) {
-        alert('Please upload a valid image file.');
+        this.toastr.warning('Please upload a valid image file.');
         return;
       }
       const maxSize = 5 * 1024 * 1024; // 5MB limit
       if (file.size > maxSize) {
-        alert('The file size exceeds the 5MB limit.');
+        this.toastr.error('The file size exceeds the 5MB limit.');
         return;
       }
       const reader = new FileReader();
@@ -91,69 +95,61 @@ export class FlashcardComponent implements OnInit {
   }
 
   addOrUpdateFlashcard() {
-  if (this.newWord.trim() && this.newMeaning.trim() && this.newSubject.trim()) {
-    const subjectValue = this.newSubject;
-    const now = Date.now();
+    if (this.newWord.trim() && this.newMeaning.trim() && this.newSubject.trim()) {
+      const subjectValue = this.newSubject;
+      const now = Date.now();
 
-    // 🔎 Find existing card if editing
-    const existingCard = this.allFlashcards.find(fc => fc.id === this.currentEditId);
+      const existingCard = this.allFlashcards.find(fc => fc.id === this.currentEditId);
 
-    const flashcard: Flashcard = {
-      word: this.newWord.trim(),
-      meaning: this.newMeaning.trim(),
-      example: this.newExample.trim(),
-      level: this.newLevel,
-      photo: this.newPhoto ? this.newPhoto.toString() : '',
-      subject: subjectValue,
-      synonyms: this.newSynonyms
-        ? this.newSynonyms.split(',').map(s => s.trim()).filter(s => s)
-        : [],
-      favorite: this.newFavorite,
-      insertionDate: this.editMode && existingCard
-        ? existingCard.insertionDate // ✅ keep original date
-        : now, // ✅ set on creation
-      updateDate: now // ✅ always updated
-    };
+      const flashcard: Flashcard = {
+        word: this.newWord.trim(),
+        meaning: this.newMeaning.trim(),
+        example: this.newExample.trim(),
+        level: this.newLevel,
+        photo: this.newPhoto ? this.newPhoto.toString() : '',
+        subject: subjectValue,
+        synonyms: this.newSynonyms
+          ? this.newSynonyms.split(',').map(s => s.trim()).filter(s => s)
+          : [],
+        favorite: this.newFavorite,
+        insertionDate: this.editMode && existingCard
+          ? existingCard.insertionDate
+          : now,
+        updateDate: now
+      };
 
-    if (this.editMode && this.currentEditId) {
-      // 🔹 UPDATE
-      this.flashcardService.updateFlashcard(this.currentEditId, flashcard).subscribe(() => {
-        alert('Flashcard updated successfully.');
+      if (this.editMode && this.currentEditId) {
+        this.flashcardService.updateFlashcard(this.currentEditId, flashcard).subscribe(() => {
+          this.toastr.success('Flashcard updated successfully.');
 
-        // ✅ Reload from Firestore to ensure subjects & filters stay correct
-        this.loadFlashcards();
+          this.loadFlashcards();
 
-        this.editMode = false;
-        this.currentEditId = null;
-      }, error => {
-        console.error('Error updating flashcard:', error);
-        alert('Error updating flashcard.');
-      });
+          this.editMode = false;
+          this.currentEditId = null;
+        }, error => {
+          console.error('Error updating flashcard:', error);
+          this.toastr.error('Error updating flashcard.');
+        });
 
+      } else {
+        this.flashcardService.addFlashcard(flashcard).subscribe(docRef => {
+          this.toastr.success('Flashcard added successfully.');
+
+          const createdCard: Flashcard = { ...flashcard, id: docRef.id };
+          this.allFlashcards.push(createdCard);
+
+          this.allFlashcards.sort((a, b) => a.insertionDate - b.insertionDate);
+
+          this.applyFilter();
+        });
+      }
+
+      this.resetForm();
+      this.isFlipped = false;
     } else {
-      // 🔹 ADD
-      this.flashcardService.addFlashcard(flashcard).subscribe(docRef => {
-        alert('Flashcard added successfully.');
-
-        // Add to local list
-        const createdCard: Flashcard = { ...flashcard, id: docRef.id };
-        this.allFlashcards.push(createdCard);
-
-        // Keep sorting by insertionDate
-        this.allFlashcards.sort((a, b) => a.insertionDate - b.insertionDate);
-
-        this.applyFilter();
-      });
+      this.toastr.warning('Please enter required fields. Flashcard is not added.');
     }
-
-    this.resetForm();
-    this.isFlipped = false;
-  } else {
-    alert('Please enter required fields. Flashcard is not added to the list');
   }
-}
-
-
 
   editFlashcard(index: number) {
     const flashcard = this.flashcards[index];
@@ -163,22 +159,22 @@ export class FlashcardComponent implements OnInit {
     this.newLevel = flashcard.level || 'Other';
     this.newPhoto = flashcard.photo || null;
     this.newSubject = flashcard.subject || '';
-    this.newFavorite = flashcard.favorite || false;  // Add this line
+    this.newFavorite = flashcard.favorite || false;
     this.editMode = true;
     this.currentEditId = flashcard.id || null;
     this.currentFlashcardIndex = index;
-    this.newSynonyms = flashcard.synonyms?.join(', ') || '';  // Add this line
+    this.newSynonyms = flashcard.synonyms?.join(', ') || '';
   }
 
   deleteFlashcard(index: number) {
     const flashcardId = this.flashcards[index].id;
     if (flashcardId) {
       this.flashcardService.deletePersonalFlashcard(flashcardId).subscribe(() => {
-        alert('Flashcard deleted successfully.');
+        this.toastr.success('Flashcard deleted successfully.');
         this.loadFlashcards();
       }, error => {
         console.error('Error deleting flashcard:', error);
-        alert('Error deleting flashcard.');
+        this.toastr.error('Error deleting flashcard.');
       });
     }
     if (this.currentFlashcardIndex >= this.flashcards.length) {
@@ -187,62 +183,44 @@ export class FlashcardComponent implements OnInit {
     this.isFlipped = false;
   }
 
-loadFlashcards() {
-  this.flashcardService.getFlashcards().subscribe(cards => {
-    // Normalize dates to numbers (ms since epoch)
-    const normalized = cards.map(card => {
-      return {
-        ...card,
-        insertionDate: this.normalizeDate(card.insertionDate),
-        updateDate: this.normalizeDate(card.updateDate)
-      } as Flashcard;
-    });
+  loadFlashcards() {
+    this.flashcardService.getFlashcards().subscribe(cards => {
+      const normalized = cards.map(card => {
+        return {
+          ...card,
+          insertionDate: this.normalizeDate(card.insertionDate),
+          updateDate: this.normalizeDate(card.updateDate)
+        } as Flashcard;
+      });
 
-    // OPTIONAL: assign reasonable insertionDate for older docs that lack it
-    // (uncomment the update call below if you want automatic migration)
-    normalized.forEach(card => {
-      if (!card.insertionDate || card.insertionDate === 0) {
-        // prefer updateDate if present, otherwise use now
-        const newInsertion = card.updateDate && card.updateDate > 0 ? card.updateDate : Date.now();
-        card.insertionDate = newInsertion;
+      normalized.forEach(card => {
+        if (!card.insertionDate || card.insertionDate === 0) {
+          const newInsertion = card.updateDate && card.updateDate > 0 ? card.updateDate : Date.now();
+          card.insertionDate = newInsertion;
 
-        //If you want to persist the migration to Firestore, uncomment:
-        if (card.id) {
-          const patched = { ...card, insertionDate: newInsertion };
-          this.flashcardService.updateFlashcard(card.id, patched).subscribe({
-            next: () => console.log(`Patched insertionDate for ${card.id}`),
-            error: err => console.error('Error patching insertionDate:', err)
-          });
+          if (card.id) {
+            const patched = { ...card, insertionDate: newInsertion };
+            this.flashcardService.updateFlashcard(card.id, patched).subscribe({
+              next: () => console.log(`Patched insertionDate for ${card.id}`),
+              error: err => console.error('Error patching insertionDate:', err)
+            });
+          }
         }
-      }
+      });
+
+      this.allFlashcards = normalized.sort((a, b) => a.insertionDate - b.insertionDate);
+
+      this.flashcardCount = this.allFlashcards.length;
+      this.applyFilter();
+    }, err => {
+      console.error('Error loading flashcards:', err);
+      this.toastr.error('Error loading flashcards.');
     });
+  }
 
-    // Sort ascending -> oldest (smallest timestamp) first, newest last
-    this.allFlashcards = normalized.sort((a, b) => a.insertionDate - b.insertionDate);
-
-    // update derived state and UI
-    this.flashcardCount = this.allFlashcards.length;
-    this.applyFilter();
-  }, err => {
-    console.error('Error loading flashcards:', err);
-  });
-}
-
-  /**
-   * Convert many possible date representations into a number (ms since epoch).
-   * Handles:
-   *  - number (ms) -> returns as is
-   *  - numeric string -> parseInt
-   *  - ISO date string -> Date.parse
-   *  - Firestore Timestamp-like object { seconds, nanoseconds } -> ms
-   *  - object with toDate() -> use toDate().getTime()
-   * fallback -> 0
-   */
   private normalizeDate(value: any): number {
     if (value == null) return 0;
-
     if (typeof value === 'number' && !isNaN(value)) return value;
-
     if (typeof value === 'string') {
       const asNum = Number(value);
       if (!isNaN(asNum)) return asNum;
@@ -250,38 +228,26 @@ loadFlashcards() {
       if (!isNaN(parsed)) return parsed;
       return 0;
     }
-
-    // Handle Firestore Timestamp-like object
     try {
-      // Firestore Timestamp (client & server) often has 'seconds' and 'nanoseconds'
       if (typeof value.seconds === 'number') {
         const ms = (value.seconds * 1000) + Math.floor((value.nanoseconds || 0) / 1e6);
         return ms;
       }
-      // Some SDK objects implement toDate()
       if (typeof value.toDate === 'function') {
         const d = value.toDate();
         if (d instanceof Date && !isNaN(d.getTime())) return d.getTime();
       }
-    } catch (e) {
-      // ignore and fallback
-    }
-
+    } catch {}
     return 0;
   }
 
-
-
-
   applyFilter() {
     if (this.filterSubject === 'All' && this.filterLevel === 'All') {
-      // Reset to all flashcards
       this.flashcards = [...this.allFlashcards];
     } else {
       this.flashcards = this.allFlashcards.filter(
         (flashcard) =>
-          (this.filterSubject === 'All' ||
-            flashcard.subject === this.filterSubject) &&
+          (this.filterSubject === 'All' || flashcard.subject === this.filterSubject) &&
           (this.filterLevel === 'All' || flashcard.level === this.filterLevel)
       );
     }
@@ -293,21 +259,20 @@ loadFlashcards() {
     }
   }
 
-
-
-
-
   clearLocalStorage() {
     this.localStorageService.clearAllFlashcards();
     this.loadFlashcards();
-    alert('All flashcards cleared from local storage');
+    this.toastr.info('All flashcards cleared from local storage.');
   }
 
   openToPublic(index: number) {
     const flashcard = this.flashcards[index];
     flashcard.public = true;
     this.flashcardService.addPublicFlashcard(flashcard).subscribe(() => {
-      alert('Flashcard opened to public successfully.');
+      this.toastr.success('Flashcard opened to public successfully.');
+    }, err => {
+      console.error('Error opening flashcard to public:', err);
+      this.toastr.error('Error opening flashcard to public.');
     });
   }
 
@@ -342,20 +307,21 @@ loadFlashcards() {
     this.newLevel = 'Other';
     this.newPhoto = null;
     this.newSubject = '';
-    this.newFavorite = false;  // Add this line
+    this.newFavorite = false;
     this.editMode = false;
     this.currentEditId = null;
     this.currentIndex = null;
-    this.newSynonyms = '';  // Add this line
+    this.newSynonyms = '';
   }
 
   toggleFavorite(flashcard: Flashcard) {
     flashcard.favorite = !flashcard.favorite;
     if (flashcard.id) {
       this.flashcardService.updateFlashcard(flashcard.id, flashcard).subscribe(() => {
-        console.log('Favorite status updated');
+        this.toastr.info('Favorite status updated.');
       }, error => {
         console.error('Error updating favorite status:', error);
+        this.toastr.error('Error updating favorite status.');
       });
     }
   }
@@ -367,26 +333,24 @@ loadFlashcards() {
 
   loadSubjects() {
     this.flashcardService.getSubjects().subscribe((subjects) => {
-      const defaults : Subject[] = [
+      const defaults: Subject[] = [
         { name: 'English' },
         { name: 'German' },
         { name: 'French' },
         { name: 'Other' }
       ];
       if (subjects.length) {
-        // merge defaults + Firestore
         this.subjects = Array.from(new Set([...subjects]));
       } else {
         this.subjects = defaults;
       }
+    }, err => {
+      console.error('Error loading subjects:', err);
+      this.toastr.error('Error loading subjects.');
     });
   }
-
 
   hasEnoughFlashcards(): boolean {
     return this.flashcardCount >= 4;
   }
-
 }
-
-

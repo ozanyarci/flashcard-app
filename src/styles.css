@@ -1,10 +1,12 @@
 /* You can add global styles to this file, and also import other style files */
+@import 'ngx-toastr/toastr';
 
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
 /* src/styles.css */
-/* src/styles.css */
+/* styles.scss */
+
 
 /* Global styles for modern buttons */
 .button-modern {
@@ -35,3 +37,48 @@ button.mat-raised-button[color="accent"]:hover {
 
 /* You might also want to include the material typography */
 @import "~@angular/material/core/theming/prebuilt/typography";
+
+
+.toast-success {
+  background-color: #4caf50 !important; /* green */
+  color: white !important;
+  font-weight: bold;
+  font-size: 14px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.toast-error {
+  background-color: #f44336 !important; /* red */
+  color: white !important;
+  font-weight: bold;
+  font-size: 14px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.toast-info {
+  background-color: #2196f3 !important; /* blue */
+  color: white !important;
+  font-weight: bold;
+  font-size: 14px;
+  border-radius: 8px;
+}
+
+.toast-warning {
+  background-color: #ff9800 !important; /* orange */
+  color: white !important;
+  font-weight: bold;
+  font-size: 14px;
+  border-radius: 8px;
+}
+
+.toast-top-right {
+  top: 70px !important;
+  right: 20px !important;
+  bottom: auto !important;
+  left: auto !important;
+}
+
+
+

@@ -7,7 +7,8 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import { environment } from '../environments/environment';
 import { getFirestore, provideFirestore } from '@angular/fire/firestore';
 import { getAuth, provideAuth } from '@angular/fire/auth';
-
+import { provideAnimations } from '@angular/platform-browser/animations';
+import { provideToastr } from 'ngx-toastr';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -16,7 +17,15 @@ export const appConfig: ApplicationConfig = {
     provideAuth(() => getAuth()),
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
-    provideAnimationsAsync()
+    provideAnimationsAsync(),
+     provideToastr({
+      positionClass: 'toast-top-right',
+      timeOut: 5000,
+      progressBar: true,
+      closeButton: true,
+      preventDuplicates: true,
+    }),
+   // Toastr provider
   ]
 };
 
