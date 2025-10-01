@@ -149,7 +149,7 @@ export class FlashcardComponent implements OnInit {
     this.resetForm();
     this.isFlipped = false;
   } else {
-    alert('All fields are required.');
+    alert('Please enter required fields. Flashcard is not added to the list');
   }
 }
 

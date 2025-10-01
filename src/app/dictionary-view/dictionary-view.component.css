@@ -42,4 +42,7 @@
   break-inside: avoid;
 }
 
+.centered{
+  text-align: center;
+}
 

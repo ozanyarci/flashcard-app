@@ -22,9 +22,9 @@ import html2pdf from 'html2pdf.js';
 export class DictionaryViewComponent implements OnInit {
   letters: string[] = [];
   groupedFlashcards: Record<string, Flashcard[]> = {};
-
   @ViewChild('dictionaryContent', { static: false }) dictionaryContent!: ElementRef;
    @Input() flashcards: Flashcard[] = [];
+   tempFlashcards: Flashcard[] = [];
   constructor(private flashcardService: FlashcardService) {}
 
   ngOnInit() {
@@ -35,7 +35,7 @@ export class DictionaryViewComponent implements OnInit {
     this.flashcardService.getFlashcards().subscribe(cards => {
       // Normalize word to start with uppercase letter
       const grouped: { [key: string]: Flashcard[] } = {};
-
+      this.tempFlashcards = cards;
       cards.forEach(card => {
         const firstLetter = card.word?.charAt(0).toUpperCase() || '#';
         if (!grouped[firstLetter]) grouped[firstLetter] = [];
