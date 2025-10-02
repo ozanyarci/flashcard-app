@@ -11,6 +11,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu';
 import { Flashcard } from './models/flashcard';
 import { Observable, switchMap } from 'rxjs';
+import { getAnalytics, logEvent } from '@angular/fire/analytics';
 
 @Component({
   selector: 'app-root',
@@ -48,6 +49,8 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit() {
+    const analytics = getAnalytics();
+    logEvent(analytics, 'test_event', { debug: true });
     this.authService.getUser().pipe(
       switchMap(user => {
         if (user) {
