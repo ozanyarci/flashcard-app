@@ -22,6 +22,7 @@
       <button *ngIf="hasEnoughFlashcards()" mat-menu-item routerLink="/sentence-test" routerLinkActive="router-link-active">Sentence Test</button>
       <button *ngIf="hasEnoughFlashcards()" mat-menu-item routerLink="/image-test" routerLinkActive="router-link-active">Image Test</button>
       <button *ngIf="hasEnoughFlashcards()" mat-menu-item routerLink="/random-test" routerLinkActive="router-link-active">Random Test</button>
+      <button *ngIf="hasEnoughFlashcards()" mat-menu-item routerLink="/synonyms-test" routerLinkActive="router-link-active">Synonyms Test</button>
       <button mat-menu-item routerLink="/signout">Sign Out</button>
       <div class="welcome-message" *ngIf="displayName">Welcome, {{ displayName }}</div>
     </mat-menu>
@@ -44,6 +45,9 @@
     </li>
     <li>
       <button mat-button class="button-modern" routerLink="/random-test" routerLinkActive="router-link-active">Random Test</button>
+    </li>
+    <li>
+      <button mat-button class="button-modern" routerLink="/synonyms-test" routerLinkActive="router-link-active">Synonyms Test</button>
     </li>
   </ul>
 </div>

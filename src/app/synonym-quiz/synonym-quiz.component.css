@@ -1,0 +1,17 @@
+mat-card {
+  max-width: 500px;
+  margin: 30px auto;
+  padding: 20px;
+  text-align: left;
+}
+
+.actions {
+  margin-top: 20px;
+  display: flex;
+  gap: 10px;
+}
+
+.feedback {
+  margin-top: 15px;
+  font-weight: bold;
+}

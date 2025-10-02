@@ -1,0 +1,36 @@
+<mat-card *ngIf="currentCard && !finished">
+  <h2>Find synonyms for: <strong>{{ currentCard.word }}</strong></h2>
+
+  <div class="options">
+    <mat-checkbox
+      *ngFor="let option of options"
+      [checked]="selected.has(option)"
+      (change)="toggleOption(option)"
+    >
+      {{ option }}
+    </mat-checkbox>
+  </div>
+
+  <div class="actions">
+    <button mat-raised-button color="primary" (click)="checkAnswer()">Check</button>
+    <button mat-raised-button color="accent" (click)="nextCard()">Next</button>
+  </div>
+
+  <p class="feedback">{{ feedback }}</p>
+  <p class="progress">{{ progressText }}</p>
+</mat-card>
+
+<!-- ✅ End screen -->
+<mat-card *ngIf="finished">
+  <h2>🎉 Quiz Completed!</h2>
+  <p>You got <strong>{{ correctAnswers }}</strong> out of <strong>{{ synonymCards.length }}</strong> correct ✅</p>
+
+  <div class="end-actions">
+    <button mat-raised-button color="primary" (click)="retakeQuiz()">🔁 Retake Quiz</button>
+    <button mat-raised-button color="accent" (click)="goToFlashcards()">📚 Go to Flashcards</button>
+  </div>
+</mat-card>
+
+<mat-card *ngIf="!currentCard && !finished">
+  <p>No flashcards with synonyms found.</p>
+</mat-card>

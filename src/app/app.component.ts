@@ -78,6 +78,6 @@ export class AppComponent implements OnInit {
   }
 
   hasEnoughFlashcards(): boolean {
-    return this.favoriteFlashcardCount >= 4;
+    return this.flashcards.length >= 4;
   }
 }
