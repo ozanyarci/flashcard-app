@@ -13,8 +13,9 @@
 
   <div class="actions">
     <button mat-raised-button color="primary" (click)="checkAnswer()">Check</button>
-    <button mat-raised-button color="accent" (click)="nextCard()">Next</button>
+    <button mat-raised-button color="accent" (click)="nextCard()" [disabled]="!answered">Next</button>
   </div>
+
 
   <p class="feedback">{{ feedback }}</p>
   <p class="progress">{{ progressText }}</p>

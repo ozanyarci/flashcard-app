@@ -23,6 +23,8 @@ export class SynonymQuizComponent implements OnInit {
   feedback: string = '';
   currentIndex: number = 0;
   finished: boolean = false;
+  // inside the class
+  answered: boolean = false;  // ✅ track if current question was checked
 
   // ✅ Score tracking
   correctAnswers: number = 0;
@@ -42,23 +44,6 @@ export class SynonymQuizComponent implements OnInit {
     });
   }
 
-  pickCard() {
-    this.feedback = '';
-    this.selected.clear();
-
-    if (!this.synonymCards.length) {
-      this.currentCard = null;
-      return;
-    }
-
-    this.currentCard = this.synonymCards[this.currentIndex];
-    const correctSynonyms: string[] = this.currentCard.synonyms ?? [];
-
-    const distractors = this.getDistractors(correctSynonyms, 4);
-    this.options = [...correctSynonyms, ...distractors]
-      .sort(() => Math.random() - 0.5);
-  }
-
   getDistractors(correct: string[], count: number): string[] {
     const pool = this.synonymCards
       .flatMap(c => c.synonyms ?? [])
@@ -76,6 +61,24 @@ export class SynonymQuizComponent implements OnInit {
     }
   }
 
+  pickCard() {
+    this.feedback = '';
+    this.selected.clear();
+    this.answered = false;   // ✅ reset for new card
+
+    if (!this.synonymCards.length) {
+      this.currentCard = null;
+      return;
+    }
+
+    this.currentCard = this.synonymCards[this.currentIndex];
+    const correctSynonyms: string[] = this.currentCard.synonyms ?? [];
+
+    const distractors = this.getDistractors(correctSynonyms, 4);
+    this.options = [...correctSynonyms, ...distractors]
+      .sort(() => Math.random() - 0.5);
+  }
+
   checkAnswer() {
     const correct = this.currentCard?.synonyms ?? [];
     const selectedArray = Array.from(this.selected);
@@ -86,10 +89,12 @@ export class SynonymQuizComponent implements OnInit {
 
     if (isCorrect) {
       this.feedback = '✅ Correct!';
-      this.correctAnswers++;   // ✅ increase score
+      this.correctAnswers++;
     } else {
       this.feedback = `❌ Wrong. Correct answers: ${correct.join(', ')}`;
     }
+
+    this.answered = true;   // ✅ allow Next button now
   }
 
   nextCard() {
@@ -102,6 +107,7 @@ export class SynonymQuizComponent implements OnInit {
       this.currentCard = null;
     }
   }
+
 
   retakeQuiz() {
     this.currentIndex = 0;
