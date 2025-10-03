@@ -3,6 +3,13 @@
   <!-- Form Container -->
   <div class="form-container">
     <form (ngSubmit)="addOrUpdateFlashcard()">
+      <!-- Subject Selection Field -->
+      <mat-form-field class="example-full-width">
+        <mat-label>Subject</mat-label>
+        <mat-select [(ngModel)]="newSubject" name="subject" required>
+          <mat-option *ngFor="let subject of subjects" [value]="subject.name">{{ subject.name }}</mat-option>
+        </mat-select>
+      </mat-form-field>
       <!-- Word Input Field -->
       <mat-form-field class="example-full-width">
         <mat-label>Word</mat-label>
@@ -31,13 +38,7 @@
           <mat-option *ngFor="let level of levels" [value]="level">{{ level }}</mat-option>
         </mat-select>
       </mat-form-field>
-      <!-- Subject Selection Field -->
-      <mat-form-field class="example-full-width">
-        <mat-label>Subject</mat-label>
-        <mat-select [(ngModel)]="newSubject" name="subject" required>
-          <mat-option *ngFor="let subject of subjects" [value]="subject.name">{{ subject.name }}</mat-option>
-        </mat-select>
-      </mat-form-field>
+
 
       <!-- Photo Upload Field -->
       <div class="photo-field">

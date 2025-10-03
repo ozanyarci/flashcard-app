@@ -59,6 +59,7 @@ export class FlashcardComponent implements OnInit {
   newSynonyms: string = '';
   newFavorite: boolean = false;
   customFilterSubject: string = '';
+  lastSelectedSubject: string = '';
 
   constructor(
     private flashcardService: FlashcardService,
@@ -96,8 +97,11 @@ export class FlashcardComponent implements OnInit {
 
   addOrUpdateFlashcard() {
     if (this.newWord.trim() && this.newMeaning.trim() && this.newSubject.trim()) {
-      const subjectValue = this.newSubject;
+      const subjectValue = this.newSubject || this.lastSelectedSubject || 'Other';
       const now = Date.now();
+
+      // remember last selected subject
+      this.lastSelectedSubject = subjectValue;
 
       const existingCard = this.allFlashcards.find(fc => fc.id === this.currentEditId);
 
@@ -120,26 +124,21 @@ export class FlashcardComponent implements OnInit {
 
       if (this.editMode && this.currentEditId) {
         this.flashcardService.updateFlashcard(this.currentEditId, flashcard).subscribe(() => {
-          this.toastr.success('Flashcard updated successfully.');
-
+          this.toastr.success('Flashcard updated successfully');
           this.loadFlashcards();
-
           this.editMode = false;
           this.currentEditId = null;
         }, error => {
           console.error('Error updating flashcard:', error);
-          this.toastr.error('Error updating flashcard.');
+          this.toastr.error('Error updating flashcard');
         });
-
       } else {
         this.flashcardService.addFlashcard(flashcard).subscribe(docRef => {
-          this.toastr.success('Flashcard added successfully.');
+          this.toastr.success('Flashcard added successfully');
 
           const createdCard: Flashcard = { ...flashcard, id: docRef.id };
           this.allFlashcards.push(createdCard);
-
           this.allFlashcards.sort((a, b) => a.insertionDate - b.insertionDate);
-
           this.applyFilter();
         });
       }
@@ -147,9 +146,10 @@ export class FlashcardComponent implements OnInit {
       this.resetForm();
       this.isFlipped = false;
     } else {
-      this.toastr.warning('Please enter required fields. Flashcard is not added.');
+      this.toastr.warning('Please enter required fields. Flashcard not added');
     }
   }
+
 
   editFlashcard(index: number) {
     const flashcard = this.flashcards[index];
@@ -306,13 +306,18 @@ export class FlashcardComponent implements OnInit {
     this.newExample = '';
     this.newLevel = 'Other';
     this.newPhoto = null;
-    this.newSubject = '';
     this.newFavorite = false;
     this.editMode = false;
     this.currentEditId = null;
     this.currentIndex = null;
     this.newSynonyms = '';
+
+    // keep subject unless user changes it
+    if (!this.newSubject) {
+      this.newSubject = this.lastSelectedSubject || 'Other';
+    }
   }
+
 
   toggleFavorite(flashcard: Flashcard) {
     flashcard.favorite = !flashcard.favorite;
