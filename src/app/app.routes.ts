@@ -16,6 +16,7 @@ import { SubjectManagerComponent } from './subject-manager/subject-manager.compo
 import { DictionaryViewComponent } from './dictionary-view/dictionary-view.component';
 import { AuthRedirectGuard } from './auth-redirect.guard';
 import { SynonymQuizComponent } from './synonym-quiz/synonym-quiz.component';
+import { MistakesTestComponent } from './mistakes-test/mistakes-test.component';
 
 export const routes: Routes = [
   { path: 'flashcards', component: FlashcardComponent, canActivate: [AuthGuard] },
@@ -27,6 +28,7 @@ export const routes: Routes = [
   { path: 'subject-manager', component: SubjectManagerComponent, canActivate: [AuthGuard]},
   { path: 'dictionary', component: DictionaryViewComponent, canActivate: [AuthGuard] },
   { path: 'synonyms-test', component: SynonymQuizComponent, canActivate: [AuthGuard] },
+  { path: 'mistakes-test', component: MistakesTestComponent, canActivate: [AuthGuard] },
   { path: 'public-flashcards', component: PublicFlashcardsComponent },
    { path: 'signin', component: SigninComponent, canActivate: [AuthRedirectGuard] },
   { path: 'signup', component: SignupComponent, canActivate: [AuthRedirectGuard] },

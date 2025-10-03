@@ -1,0 +1,21 @@
+<mat-card class="test-container" *ngIf="!noMistakes && !showResult">
+  <mat-card-header>
+    <mat-card-title>Mistakes Test {{currentQuestionIndex + 1}} / {{flashcards.length}}</mat-card-title>
+  </mat-card-header>
+
+  <mat-card-content>
+    <p>Select the word that matches the meaning: <strong>{{flashcards[currentQuestionIndex]?.meaning}}</strong></p>
+    <mat-radio-group [(ngModel)]="userAnswer" (change)="checkAnswer($event.value)" class="options-group">
+      <mat-radio-button *ngFor="let option of options" [value]="option" class="option-item">
+        {{ option }}
+      </mat-radio-button>
+    </mat-radio-group>
+    <div *ngIf="immediateFeedback">
+      <p>{{ immediateFeedback }}</p>
+    </div>
+  </mat-card-content>
+
+  <mat-card-actions *ngIf="immediateFeedback">
+    <button mat-raised-button color="primary" class="button-modern" (click)="nextQuestion()">Next</button>
+  </mat-card-actions>
+</mat-card>

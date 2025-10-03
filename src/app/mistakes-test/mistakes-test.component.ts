@@ -1,21 +1,21 @@
-// src/app/meaning-test/meaning-test.component.ts
+// src/app/mistakes-test/mistakes-test.component.ts
 
 import { Component, OnInit } from '@angular/core';
 import { FlashcardService } from '../flashcard.service';
+import { Flashcard } from '../models/flashcard';
 import { CommonModule } from '@angular/common';
 import { MatRadioModule } from '@angular/material/radio';
 import { FormsModule } from '@angular/forms';
-import { RouterLink, RouterLinkActive } from '@angular/router';
-import { Flashcard } from '../models/flashcard';
-import { Router } from '@angular/router';
+import { RouterLink } from '@angular/router';
+import {MatCardModule} from '@angular/material/card';
 @Component({
-  selector: 'app-meaning-test',
-  templateUrl: './meaning-test.component.html',
-  imports: [CommonModule,MatRadioModule,FormsModule,RouterLink],
-  standalone:true,
-  styleUrls: ['./meaning-test.component.css']
+  selector: 'app-mistakes-test',
+  standalone: true,
+  imports: [CommonModule, MatRadioModule, FormsModule, RouterLink, MatCardModule],
+  templateUrl: './mistakes-test.component.html',
+  styleUrls: ['./mistakes-test.component.css']
 })
-export class MeaningTestComponent implements OnInit {
+export class MistakesTestComponent implements OnInit {
   flashcards: Flashcard[] = [];
   currentQuestionIndex: number = 0;
   options: string[] = [];
@@ -23,30 +23,26 @@ export class MeaningTestComponent implements OnInit {
   userAnswer: string | null = null;
   score: number = 0;
   showResult: boolean = false;
-  noFlashcards: boolean = false;
+  noMistakes: boolean = false;
   immediateFeedback: string | null = null;
-  mistakes: Flashcard[] = []; // store wrong answers
-  constructor(private flashcardService: FlashcardService,
-              private router: Router) { }
+
+  constructor(private flashcardService: FlashcardService) {}
 
   ngOnInit(): void {
-    this.flashcardService.getFlashcards().subscribe(flashcards => {
-      this.flashcards = flashcards;
-      if (this.flashcards.length > 0) {
-        this.loadQuestion();
-      } else {
-        this.noFlashcards = true;
-      }
-    });
-
+    this.flashcards = this.flashcardService.getMistakes();
+    if (this.flashcards.length > 0) {
+      this.loadQuestion();
+    } else {
+      this.noMistakes = true;
+    }
   }
 
   loadQuestion(): void {
-    if (this.flashcards.length > 0 && this.currentQuestionIndex < this.flashcards.length) {
+    if (this.currentQuestionIndex < this.flashcards.length) {
       const currentFlashcard = this.flashcards[this.currentQuestionIndex];
       this.correctAnswer = currentFlashcard.word;
       this.options = this.generateOptions(currentFlashcard.word);
-      this.immediateFeedback = null;  // Reset feedback for each new question
+      this.immediateFeedback = null;
     }
   }
 
@@ -64,15 +60,11 @@ export class MeaningTestComponent implements OnInit {
 
   shuffle(array: any[]): any[] {
     let currentIndex = array.length, randomIndex;
-
     while (currentIndex !== 0) {
       randomIndex = Math.floor(Math.random() * currentIndex);
       currentIndex--;
-
-      [array[currentIndex], array[randomIndex]] = [
-        array[randomIndex], array[currentIndex]];
+      [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
     }
-
     return array;
   }
 
@@ -83,15 +75,7 @@ export class MeaningTestComponent implements OnInit {
       this.score++;
     } else {
       this.immediateFeedback = `Incorrect. The correct answer is "${this.correctAnswer}".`;
-      // Save this flashcard into mistakes
-      this.mistakes.push(this.flashcards[this.currentQuestionIndex]);
     }
-  }
-
-  // Add a way to start mistakes test
-  goToMistakesTest(): void {
-    this.flashcardService.setMistakes(this.mistakes);
-    this.router.navigate(['/mistakes-test']);
   }
 
   nextQuestion(): void {
@@ -112,7 +96,7 @@ export class MeaningTestComponent implements OnInit {
     if (this.flashcards.length > 0) {
       this.loadQuestion();
     } else {
-      this.noFlashcards = true;
+      this.noMistakes = true;
     }
   }
 }

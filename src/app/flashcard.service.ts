@@ -119,5 +119,13 @@ export class FlashcardService {
     return this.firebaseService.deleteSubject(subjectId);
   }
 
+  private mistakes: Flashcard[] = [];
 
+  setMistakes(mistakes: Flashcard[]) {
+    this.mistakes = mistakes;
+  }
+
+  getMistakes(): Flashcard[] {
+    return this.mistakes;
+  }
 }

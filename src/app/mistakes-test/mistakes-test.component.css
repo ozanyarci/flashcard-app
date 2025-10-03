@@ -1,0 +1,84 @@
+.test-container,
+.result-container,
+.no-flashcards-container {
+  max-width: 600px;
+  margin: 40px auto;
+  padding: 30px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  animation: fadeIn 0.4s ease;
+}
+
+h2 {
+  margin-bottom: 20px;
+  font-weight: 600;
+  color: #3f51b5; /* Material primary color */
+}
+
+p {
+  font-size: 16px;
+  margin-bottom: 20px;
+}
+
+.options-group {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin: 20px 0;
+}
+
+.option-item {
+  margin: 8px 0;
+  font-size: 16px;
+}
+
+button {
+  margin: 10px 8px 0 8px;
+}
+
+.mat-radio-button.mat-accent .mat-radio-inner-circle {
+  background-color: #3f51b5; /* Primary accent for radio */
+}
+
+.button-modern {
+  border-radius: 25px;
+  padding: 10px 24px;
+  font-weight: 600;
+  text-transform: uppercase;
+  transition: all 0.2s ease;
+}
+
+.button-modern[color="primary"] {
+  background-color: #3f51b5;
+  color: white;
+}
+
+.button-modern[color="primary"]:hover {
+  background-color: #303f9f;
+}
+
+.button-modern[color="accent"] {
+  background-color: #ff4081;
+  color: white;
+}
+
+.button-modern[color="accent"]:hover {
+  background-color: #f50057;
+}
+
+.button-modern[color="warn"] {
+  background-color: #f44336;
+  color: white;
+}
+
+.button-modern[color="warn"]:hover {
+  background-color: #d32f2f;
+}
+
+/* Smooth fade-in for containers */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
