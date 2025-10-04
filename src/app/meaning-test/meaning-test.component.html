@@ -26,8 +26,15 @@
   <button mat-raised-button color="primary" class="button-modern" (click)="restartTest()">Restart Test</button>
   <button mat-raised-button color="accent" class="button-modern" routerLink="/flashcards">Back to Flashcards</button>
 
-  <button *ngIf="mistakes.length >= 4" mat-raised-button color="warn" class="button-modern" (click)="goToMistakesTest()">
-    Retry Mistakes ({{ mistakes.length }})
-  </button>
+  <button *ngIf="(mistakes$ | async)?.length! > 0"
+        mat-raised-button
+        color="warn"
+        class="button-modern"
+        (click)="goToMistakesTest()">
+  Retry Remaining Mistakes ({{ (mistakes$ | async)?.length }})
+</button>
+
 </div>
+
+
 

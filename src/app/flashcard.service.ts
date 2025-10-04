@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { FirebaseService } from './firebase.service';
 import { LocalStorageService } from './local-storage.service';
-import { Observable, of } from 'rxjs';
+import { BehaviorSubject, Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { Flashcard } from './models/flashcard';
 import { DocumentReference, DocumentData } from '@angular/fire/firestore';
@@ -119,13 +119,38 @@ export class FlashcardService {
     return this.firebaseService.deleteSubject(subjectId);
   }
 
-  private mistakes: Flashcard[] = [];
+  private mistakesSubject = new BehaviorSubject<Flashcard[]>([]);
+  mistakes$ = this.mistakesSubject.asObservable();
 
-  setMistakes(mistakes: Flashcard[]) {
-    this.mistakes = mistakes;
+
+  // ✅ allow other components to subscribe
+  getMistakes(): Observable<Flashcard[]> {
+    return this.mistakesSubject.asObservable();
   }
 
-  getMistakes(): Flashcard[] {
-    return this.mistakes;
+  // ✅ allow adding mistakes
+  setMistakes(mistakes: Flashcard[]): void {
+    this.mistakesSubject.next(mistakes);
   }
+
+  // ✅ allow appending a mistake
+  addMistake(mistake: Flashcard): void {
+    const current = this.mistakesSubject.getValue();
+    if (!current.some(m => m.id === mistake.id)) {
+      this.mistakesSubject.next([...current, mistake]);
+    }
+  }
+
+  // ✅ allow clearing mistakes
+  clearMistakes(): void {
+    this.mistakesSubject.next([]);
+  }
+
+  // src/app/flashcard.service.ts
+  removeMistake(mistake: Flashcard): void {
+    const current = this.mistakesSubject.getValue();
+    this.mistakesSubject.next(current.filter(m => m.id !== mistake.id));
+  }
+
+
 }

@@ -8,6 +8,7 @@ import { FormsModule } from '@angular/forms';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { Flashcard } from '../models/flashcard';
 import { Router } from '@angular/router';
+import { Observable } from 'rxjs';
 @Component({
   selector: 'app-meaning-test',
   templateUrl: './meaning-test.component.html',
@@ -26,10 +27,12 @@ export class MeaningTestComponent implements OnInit {
   noFlashcards: boolean = false;
   immediateFeedback: string | null = null;
   mistakes: Flashcard[] = []; // store wrong answers
+  mistakes$!: Observable<Flashcard[]>;
   constructor(private flashcardService: FlashcardService,
               private router: Router) { }
 
   ngOnInit(): void {
+    this.mistakes$ = this.flashcardService.mistakes$;
     this.flashcardService.getFlashcards().subscribe(flashcards => {
       this.flashcards = flashcards;
       if (this.flashcards.length > 0) {
@@ -77,22 +80,25 @@ export class MeaningTestComponent implements OnInit {
   }
 
   checkAnswer(answer: string): void {
-    this.userAnswer = answer;
-    if (this.userAnswer === this.correctAnswer) {
-      this.immediateFeedback = `Correct! "${this.correctAnswer}" is the right answer.`;
-      this.score++;
-    } else {
-      this.immediateFeedback = `Incorrect. The correct answer is "${this.correctAnswer}".`;
-      // Save this flashcard into mistakes
-      this.mistakes.push(this.flashcards[this.currentQuestionIndex]);
-    }
+  this.userAnswer = answer;
+  const currentFlashcard = this.flashcards[this.currentQuestionIndex];
+
+  if (this.userAnswer === this.correctAnswer) {
+    this.immediateFeedback = `Correct! "${this.correctAnswer}" is the right answer.`;
+    this.score++;
+  } else {
+    this.immediateFeedback = `Incorrect. The correct answer is "${this.correctAnswer}".`;
+    // ✅ save mistake to service
+    this.flashcardService.addMistake(currentFlashcard);
   }
+}
+
 
   // Add a way to start mistakes test
   goToMistakesTest(): void {
-    this.flashcardService.setMistakes(this.mistakes);
     this.router.navigate(['/mistakes-test']);
   }
+
 
   nextQuestion(): void {
     if (this.currentQuestionIndex < this.flashcards.length - 1) {

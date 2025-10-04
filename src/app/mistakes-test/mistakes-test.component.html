@@ -1,21 +1,54 @@
-<mat-card class="test-container" *ngIf="!noMistakes && !showResult">
+<mat-card class="test-container" *ngIf="!showResult && mistakes.length > 0">
   <mat-card-header>
-    <mat-card-title>Mistakes Test {{currentQuestionIndex + 1}} / {{flashcards.length}}</mat-card-title>
+    <mat-card-title>Question {{ currentQuestionIndex + 1 }} / {{ mistakes.length }}</mat-card-title>
   </mat-card-header>
 
   <mat-card-content>
-    <p>Select the word that matches the meaning: <strong>{{flashcards[currentQuestionIndex]?.meaning}}</strong></p>
-    <mat-radio-group [(ngModel)]="userAnswer" (change)="checkAnswer($event.value)" class="options-group">
-      <mat-radio-button *ngFor="let option of options" [value]="option" class="option-item">
-        {{ option }}
+    <p class="prompt">
+      Select the correct meaning for:
+      <strong class="word">{{ currentWord }}</strong>
+    </p>
+
+    <mat-radio-group [(ngModel)]="selectedOption" class="options-group">
+      <mat-radio-button
+        *ngFor="let opt of options"
+        [value]="opt"
+        [disabled]="answered"
+        class="option-item">
+        {{ opt }}
       </mat-radio-button>
     </mat-radio-group>
-    <div *ngIf="immediateFeedback">
-      <p>{{ immediateFeedback }}</p>
+
+    <div class="feedback" *ngIf="feedback">
+      <p>{{ feedback }}</p>
     </div>
   </mat-card-content>
 
-  <mat-card-actions *ngIf="immediateFeedback">
-    <button mat-raised-button color="primary" class="button-modern" (click)="nextQuestion()">Next</button>
+  <mat-card-actions class="actions">
+    <button mat-raised-button color="primary" (click)="checkAnswer()" [disabled]="answered || !selectedOption">
+      Check
+    </button>
+    <button mat-raised-button color="accent" (click)="nextQuestion()" [disabled]="!answered">
+      Next
+    </button>
+    <button mat-button (click)="backToFlashcards()">Back</button>
+  </mat-card-actions>
+</mat-card>
+
+<!-- No mistakes / finished view -->
+<mat-card class="result-container" *ngIf="showResult">
+  <mat-card-header>
+    <mat-card-title *ngIf="noMistakes">No mistakes — well done! 🎉</mat-card-title>
+    <mat-card-title *ngIf="!noMistakes">Mistakes Test Completed</mat-card-title>
+  </mat-card-header>
+
+  <mat-card-content>
+    <p *ngIf="!noMistakes">You got <strong>{{ score }}</strong> correct during this session.</p>
+    <p *ngIf="noMistakes">You have no remaining mistakes.</p>
+  </mat-card-content>
+
+  <mat-card-actions>
+    <button mat-raised-button color="primary" (click)="retryTest()" *ngIf="!noMistakes"  >Retry Remaining </button>
+    <button mat-raised-button color="accent" (click)="backToFlashcards()">Go to Flashcards</button>
   </mat-card-actions>
 </mat-card>
