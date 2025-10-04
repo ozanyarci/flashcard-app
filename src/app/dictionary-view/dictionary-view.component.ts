@@ -8,8 +8,6 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import jsPDF from 'jspdf';
-import html2canvas from 'html2canvas';
 import html2pdf from 'html2pdf.js';
 
 @Component({
@@ -23,8 +21,9 @@ export class DictionaryViewComponent implements OnInit {
   letters: string[] = [];
   groupedFlashcards: Record<string, Flashcard[]> = {};
   @ViewChild('dictionaryContent', { static: false }) dictionaryContent!: ElementRef;
-   @Input() flashcards: Flashcard[] = [];
-   tempFlashcards: Flashcard[] = [];
+  @Input() flashcards: Flashcard[] = [];
+  tempFlashcards: Flashcard[] = [];
+
   constructor(private flashcardService: FlashcardService) {}
 
   ngOnInit() {
@@ -55,17 +54,17 @@ export class DictionaryViewComponent implements OnInit {
   }
 
   ngOnChanges() {
-      if (this.flashcards) {
-        this.flashcards.sort((a, b) => a.word.localeCompare(b.word));
-        this.groupedFlashcards = this.flashcards.reduce((acc, card) => {
-          const letter = card.word.charAt(0).toUpperCase();
-          if (!acc[letter]) acc[letter] = [];
-          acc[letter].push(card);
-          return acc;
-        }, {} as Record<string, Flashcard[]>);
+    if (this.flashcards) {
+      this.flashcards.sort((a, b) => a.word.localeCompare(b.word));
+      this.groupedFlashcards = this.flashcards.reduce((acc, card) => {
+        const letter = card.word.charAt(0).toUpperCase();
+        if (!acc[letter]) acc[letter] = [];
+        acc[letter].push(card);
+        return acc;
+      }, {} as Record<string, Flashcard[]>);
 
-        this.letters = Object.keys(this.groupedFlashcards).sort();
-      }
+      this.letters = Object.keys(this.groupedFlashcards).sort();
+    }
   }
 
   printPDF() {
@@ -80,12 +79,13 @@ export class DictionaryViewComponent implements OnInit {
       pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
     };
 
-
-
-
-    // New Promise-based usage:
     html2pdf().set(opt).from(element).save();
-    }
+  }
 
-
+  /**
+   * Return true if this card has a non-empty example (ignores whitespace)
+   */
+  hasExample(card: Flashcard): boolean {
+    return !!card?.example && (card.example + '').trim().length > 0;
+  }
 }

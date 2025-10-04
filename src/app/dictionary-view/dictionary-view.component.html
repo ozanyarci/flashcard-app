@@ -8,7 +8,10 @@
       <div *ngFor="let card of groupedFlashcards[letter]" class="flashcard-entry">
         <h3 class="word">{{ card.word }}</h3>
         <p><strong>Definition:</strong> {{ card.meaning }}</p>
-        <p><strong>Example:</strong> {{ card.example }}</p>
+
+        <!-- show example only when present -->
+        <p *ngIf="hasExample(card)"><strong>Example:</strong> {{ card.example }}</p>
+
         <p><strong>Subject:</strong> {{ card.subject }}</p>
         <p *ngIf="card.level != 'Other'"><strong>Level:</strong> {{ card.level }}</p>
         <hr>
