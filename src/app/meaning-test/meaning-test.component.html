@@ -1,40 +1,58 @@
-<!-- src/app/meaning-test/meaning-test.component.html -->
-
 <div *ngIf="noFlashcards" class="no-flashcards-container">
   <h2>No flashcards available</h2>
   <p>Please create some flashcards to start the test.</p>
   <button mat-raised-button color="primary" class="button-modern" routerLink="/flashcards">Go to Flashcards</button>
 </div>
+
 <div class="test-container" *ngIf="!noFlashcards && !showResult">
-  <h2>Question {{currentQuestionIndex + 1}}/{{flashcards.length}}</h2>
-  <p>Select the word that matches the meaning: <strong>{{flashcards[currentQuestionIndex]?.meaning}}</strong></p>
-  <mat-radio-group [(ngModel)]="userAnswer" (change)="checkAnswer($event.value)" class="options-group">
-    <mat-radio-button *ngFor="let option of options" [value]="option" class="option-item">
+  <h2>Question {{ currentQuestionIndex + 1 }}/{{ flashcards.length }}</h2>
+  <p>Select the word that matches the meaning: <strong>{{ flashcards[currentQuestionIndex]?.meaning }}</strong></p>
+
+  <mat-radio-group [(ngModel)]="userAnswer" class="options-group">
+    <mat-radio-button
+      *ngFor="let option of options"
+      [value]="option"
+      class="option-item"
+      [disabled]="disableOptions">
       {{ option }}
     </mat-radio-button>
   </mat-radio-group>
+
+  <button
+    mat-raised-button
+    color="primary"
+    class="button-modern"
+    (click)="checkAnswer()"
+    [disabled]="!userAnswer || disableCheck">
+    Check My Answer
+  </button>
+
   <div *ngIf="immediateFeedback">
     <p>{{ immediateFeedback }}</p>
-    <button mat-raised-button color="primary" class="button-modern" (click)="nextQuestion()">Next Question</button>
+    <button
+      mat-raised-button
+      color="accent"
+      class="button-modern"
+      (click)="nextQuestion()">
+      Next Question
+    </button>
   </div>
 </div>
-<!-- src/app/meaning-test/meaning-test.component.html -->
 
 <div class="result-container" *ngIf="showResult">
   <h2>Test Completed</h2>
   <p>You scored {{ score }} out of {{ flashcards.length }}</p>
+
   <button mat-raised-button color="primary" class="button-modern" (click)="restartTest()">Restart Test</button>
   <button mat-raised-button color="accent" class="button-modern" routerLink="/flashcards">Back to Flashcards</button>
 
-  <button *ngIf="(mistakes$ | async)?.length! > 0"
-        mat-raised-button
-        color="warn"
-        class="button-modern"
-        (click)="goToMistakesTest()">
-  Retry Remaining Mistakes ({{ (mistakes$ | async)?.length }})
-</button>
-
+  <button
+    *ngIf="(mistakes$ | async)?.length! > 0"
+    mat-raised-button
+    color="warn"
+    class="button-modern"
+    (click)="goToMistakesTest()">
+    Retry Remaining Mistakes ({{ (mistakes$ | async)?.length }})
+  </button>
 </div>
-
-
 

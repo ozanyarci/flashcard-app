@@ -1,19 +1,18 @@
-// src/app/meaning-test/meaning-test.component.ts
-
 import { Component, OnInit } from '@angular/core';
 import { FlashcardService } from '../flashcard.service';
 import { CommonModule } from '@angular/common';
 import { MatRadioModule } from '@angular/material/radio';
 import { FormsModule } from '@angular/forms';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { RouterLink } from '@angular/router';
 import { Flashcard } from '../models/flashcard';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
+
 @Component({
   selector: 'app-meaning-test',
   templateUrl: './meaning-test.component.html',
-  imports: [CommonModule,MatRadioModule,FormsModule,RouterLink],
-  standalone:true,
+  imports: [CommonModule, MatRadioModule, FormsModule, RouterLink],
+  standalone: true,
   styleUrls: ['./meaning-test.component.css']
 })
 export class MeaningTestComponent implements OnInit {
@@ -28,8 +27,12 @@ export class MeaningTestComponent implements OnInit {
   immediateFeedback: string | null = null;
   mistakes: Flashcard[] = []; // store wrong answers
   mistakes$!: Observable<Flashcard[]>;
-  constructor(private flashcardService: FlashcardService,
-              private router: Router) { }
+
+  isChecked: boolean = false; // ✅ has user clicked "Check My Answer"
+  disableCheck: boolean = false; // ✅ to avoid multiple clicks
+  disableOptions: boolean = false; // ✅ disable answers after checking
+
+  constructor(private flashcardService: FlashcardService, private router: Router) {}
 
   ngOnInit(): void {
     this.mistakes$ = this.flashcardService.mistakes$;
@@ -41,7 +44,6 @@ export class MeaningTestComponent implements OnInit {
         this.noFlashcards = true;
       }
     });
-
   }
 
   loadQuestion(): void {
@@ -49,7 +51,11 @@ export class MeaningTestComponent implements OnInit {
       const currentFlashcard = this.flashcards[this.currentQuestionIndex];
       this.correctAnswer = currentFlashcard.word;
       this.options = this.generateOptions(currentFlashcard.word);
-      this.immediateFeedback = null;  // Reset feedback for each new question
+      this.immediateFeedback = null;
+      this.userAnswer = null;
+      this.isChecked = false;
+      this.disableCheck = false;
+      this.disableOptions = false;
     }
   }
 
@@ -67,43 +73,35 @@ export class MeaningTestComponent implements OnInit {
 
   shuffle(array: any[]): any[] {
     let currentIndex = array.length, randomIndex;
-
     while (currentIndex !== 0) {
       randomIndex = Math.floor(Math.random() * currentIndex);
       currentIndex--;
-
-      [array[currentIndex], array[randomIndex]] = [
-        array[randomIndex], array[currentIndex]];
+      [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
     }
-
     return array;
   }
 
-  checkAnswer(answer: string): void {
-  this.userAnswer = answer;
-  const currentFlashcard = this.flashcards[this.currentQuestionIndex];
+  checkAnswer(): void {
+    if (this.disableCheck || !this.userAnswer) return;
 
-  if (this.userAnswer === this.correctAnswer) {
-    this.immediateFeedback = `Correct! "${this.correctAnswer}" is the right answer.`;
-    this.score++;
-  } else {
-    this.immediateFeedback = `Incorrect. The correct answer is "${this.correctAnswer}".`;
-    // ✅ save mistake to service
-    this.flashcardService.addMistake(currentFlashcard);
+    this.disableCheck = true;
+    this.disableOptions = true;
+    this.isChecked = true;
+
+    const currentFlashcard = this.flashcards[this.currentQuestionIndex];
+
+    if (this.userAnswer === this.correctAnswer) {
+      this.immediateFeedback = `✅ Correct! "${this.correctAnswer}" is the right answer.`;
+      this.score++;
+    } else {
+      this.immediateFeedback = `❌ Incorrect. The correct answer is "${this.correctAnswer}".`;
+      this.flashcardService.addMistake(currentFlashcard);
+    }
   }
-}
-
-
-  // Add a way to start mistakes test
-  goToMistakesTest(): void {
-    this.router.navigate(['/mistakes-test']);
-  }
-
 
   nextQuestion(): void {
     if (this.currentQuestionIndex < this.flashcards.length - 1) {
       this.currentQuestionIndex++;
-      this.userAnswer = null;
       this.loadQuestion();
     } else {
       this.showResult = true;
@@ -115,10 +113,10 @@ export class MeaningTestComponent implements OnInit {
     this.userAnswer = null;
     this.score = 0;
     this.showResult = false;
-    if (this.flashcards.length > 0) {
-      this.loadQuestion();
-    } else {
-      this.noFlashcards = true;
-    }
+    this.loadQuestion();
+  }
+
+  goToMistakesTest(): void {
+    this.router.navigate(['/mistakes-test']);
   }
 }

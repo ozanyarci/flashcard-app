@@ -1,53 +1,53 @@
-/* src/app/meaning-test/meaning-test.component.css */
+  /* src/app/meaning-test/meaning-test.component.css */
 
-.test-container,
-.result-container,
-.no-flashcards-container {
-  max-width: 600px;
-  margin: 20px auto;
-  text-align: center;
-}
+  .test-container,
+  .result-container,
+  .no-flashcards-container {
+    max-width: 600px;
+    margin: 20px auto;
+    text-align: center;
+  }
 
-button {
-  margin-top: 10px;
-}
+  button {
+    margin-top: 10px;
+  }
 
-.options-group {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  margin: 20px 0;
-}
+  .options-group {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin: 20px 0;
+  }
 
-.option-item {
-  display: flex;
-  align-items: center;
-  margin-bottom: 10px;
-}
+  .option-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+  }
 
-.no-flashcards-container {
-  margin-top: 50px;
-}
+  .no-flashcards-container {
+    margin-top: 50px;
+  }
 
-.button-modern {
-  background-color: #4caf50; /* Green background color */
-  color: white;
-  font-weight: bold;
-  border-radius: 20px;
-  padding: 10px 20px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-  transition: background-color 0.3s ease, box-shadow 0.3s ease;
-}
+  .button-modern {
+    background-color: #4caf50; /* Green background color */
+    color: white;
+    font-weight: bold;
+    border-radius: 20px;
+    padding: 10px 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  }
 
-.button-modern:hover {
-  background-color: #388e3c; /* Darker green on hover */
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-}
+  .button-modern:hover {
+    background-color: #388e3c; /* Darker green on hover */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  }
 
-.button-modern[color="accent"] {
-  background-color: #ff4081; /* Accent color for back button */
-}
+  .button-modern[color="accent"] {
+    background-color: #ff4081; /* Accent color for back button */
+  }
 
-.button-modern[color="accent"]:hover {
-  background-color: #f50057; /* Darker accent on hover */
-}
+  .button-modern[color="accent"]:hover {
+    background-color: #f50057; /* Darker accent on hover */
+  }
