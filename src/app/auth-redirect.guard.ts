@@ -1,23 +1,27 @@
 import { Injectable } from '@angular/core';
 import { CanActivate, Router } from '@angular/router';
 import { AuthService } from './auth.service';
-import { map } from 'rxjs/operators';
+import { map, take, tap } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { User } from '@angular/fire/auth';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthRedirectGuard implements CanActivate {
+
   constructor(private authService: AuthService, private router: Router) {}
 
-  canActivate() {
+  canActivate(): Observable<boolean> {
     return this.authService.getUser().pipe(
-      map(user => {
+      take(1), // ✅ Ensures it runs once, prevents loops
+      tap((user: User | null) => {
         if (user) {
-          this.router.navigate(['/flashcards']); // ✅ logged in → go to flashcards
-          return false; // stop navigation to signin
+          // ✅ Navigation happens *after* guard finishes
+          setTimeout(() => this.router.navigate(['/flashcards']), 0);
         }
-        return true; // no user → allow signin/signup
-      })
+      }),
+      map(user => !user) // ✅ allow navigation only if NOT signed in
     );
   }
 }

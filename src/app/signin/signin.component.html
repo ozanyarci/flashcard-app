@@ -6,12 +6,26 @@
         <mat-label>Email</mat-label>
         <input matInput type="email" [(ngModel)]="email" name="email" required>
       </mat-form-field>
+
       <mat-form-field appearance="fill">
         <mat-label>Password</mat-label>
         <input matInput type="password" [(ngModel)]="password" name="password" required>
       </mat-form-field>
+
+      <div style="display: flex; flex-direction: column; gap: 10px;">
       <button mat-raised-button color="primary" type="submit">Sign In</button>
+      <button mat-raised-button color="accent" type="button" (click)="sendVerificationEmail()">
+        Send Verification Email
+      </button>
+    </div>
+
+<!-- 
+
+      <p *ngIf="verificationMessage" style="margin-top: 10px; color: #2e7d32;">
+        {{ verificationMessage }}
+      </p> -->
     </form>
+
     <ng-template #setDisplayNameForm>
       <form (ngSubmit)="saveDisplayName()">
         <mat-form-field appearance="fill">
@@ -21,6 +35,9 @@
         <button mat-raised-button color="primary" type="submit">Save Display Name</button>
       </form>
     </ng-template>
-    <p *ngIf="!displayNameRequired">Don't have an account? <a routerLink="/signup">Sign Up</a></p>
+
+    <p *ngIf="!displayNameRequired">
+      Don't have an account? <a routerLink="/signup">Sign Up</a>
+    </p>
   </mat-card-content>
 </mat-card>
